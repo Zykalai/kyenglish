@@ -1791,6 +1791,7 @@ const bubble = $('#wordBubble');
 let bubbleCtx = null;
 let bubbleWord = null; // 当前气泡所属单词（小写原文），用于"再点同一词关闭"
 let suppressNextLookup = false; // 首页/导航跳转的那一下点击，抑制穿透查词
+let blockLookupUntil = 0; // 移动端软键盘发送后，短窗口屏蔽合成点击穿透到正文查词
 
 /* ---------------- 朗读：浏览器内置 Web Speech，选默认女声 ---------------- */
 const SPEAKER_ICON = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">' +
@@ -2882,6 +2883,8 @@ aiSendBtn.onclick = () => {
   const v = aiInput.value;
   aiInput.value = '';
   aiInput.style.height = 'auto';
+  // 移动端软键盘发送后键盘收起，会有合成点击落到新露出的正文，短窗口屏蔽避免穿透查词
+  if (smallScreen()) blockLookupUntil = Date.now() + 600;
   sendUserMessage(v, false);
 };
 aiInput.addEventListener('keydown', ev => {
@@ -2942,6 +2945,8 @@ document.addEventListener('mouseup', ev => {
   setTimeout(() => {
     // 导航跳转导致的点击穿透：跳过本次查词
     if (suppressNextLookup) { suppressNextLookup = false; hideFavBar(); return; }
+    // 软键盘发送后的合成点击穿透：屏蔽窗口内不查词、不弹收藏条
+    if (Date.now() < blockLookupUntil) { hideFavBar(); hideTransPop(); return; }
     const sel = getEnglishSelection();
     if (sel) {
       // 拖拽划选：弹收藏条（不做单词查词），并收起旧翻译框
