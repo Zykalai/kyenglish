@@ -382,6 +382,8 @@ body.dark .tp2-time.over #timerTime{color:#e07a5f;}
   color:var(--pine);font-variant-numeric:tabular-nums;white-space:nowrap;}
 /* 运行中：秒表 / 倒计时按钮仅变绿色，不改变尺寸 */
 #swBtn.running,#timerBtn.running{background:var(--pine);border-color:var(--pine);color:#fff;}
+/* 深色模式下 --pine 为浅绿，白字对比不足，改用深字保证清晰 */
+body.dark #swBtn.running,body.dark #timerBtn.running{color:#152922;}
 /* 考研核心徽章 */
 .wb-ky{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:var(--pine);
   border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:middle;}
@@ -783,6 +785,7 @@ body.aic-dragging-move,body.aic-dragging-move *{cursor:move !important;}
   </div>
   <div class="tp2-btns">
     <button class="primary" id="tStart">开始</button>
+    <button id="tPause" hidden>暂停</button>
     <button id="tReset" hidden>重置</button>
   </div>
 </div>
@@ -1902,11 +1905,12 @@ function bindFavBtn(lk) {
   };
 }
 
-/* 在线兜底：MyMemory 免费翻译接口（CORS 开放），用于离线词典全未命中时 */
+/* 在线兜底：MyMemory 免费翻译接口（CORS 开放），用于离线词典全未命中时；
+   加 10 秒超时，弱网挂起时不再永久转圈 */
 function onlineLookup(word) {
   const url = 'https://api.mymemory.translated.net/get?q=' +
     encodeURIComponent(word) + '&langpair=en|zh-CN';
-  return fetch(url).then(r => r.json()).then(d => {
+  return fetchWithTimeout(url, {}, 10000).then(r => r.json()).then(d => {
     const t = d && d.responseData && d.responseData.translatedText;
     if (!t || /MYMEMORY|WARNING|INVALID|QUERY LENGTH/i.test(t)) throw new Error('bad result');
     return String(t).trim();
@@ -2046,7 +2050,8 @@ function nowHHMM() {
   const d = new Date();
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
-function saveFavorites() { lsSet('e2_favorites', state.favorites.slice(0, 300)); }
+const FAV_MAX = 300;
+function saveFavorites() { lsSet('e2_favorites', state.favorites.slice(0, FAV_MAX)); }
 function isWordFav(lemma) {
   return state.favorites.some(f => f.type === 'word' && f.lemma === lemma);
 }
@@ -2056,6 +2061,10 @@ function toggleWordFav(lk) {
     state.favorites.splice(i, 1);
     saveFavorites();
     toast('已取消收藏');
+    return false;
+  }
+  if (state.favorites.length >= FAV_MAX) {
+    toast('收藏已达上限 ' + FAV_MAX + ' 条，请先删除部分收藏再添加');
     return false;
   }
   const e = lk.entry;
@@ -2075,6 +2084,10 @@ function addSentFav(text, label) {
   const norm = text.replace(/\s+/g, ' ').trim();
   if (state.favorites.some(f => f.type === 'sent' && f.text === norm)) {
     toast('该句子已收藏过');
+    return false;
+  }
+  if (state.favorites.length >= FAV_MAX) {
+    toast('收藏已达上限 ' + FAV_MAX + ' 条，请先删除部分收藏再添加');
     return false;
   }
   state.favorites.unshift({ type: 'sent', text: norm, label: label || '', time: nowHHMM() });
@@ -2586,26 +2599,31 @@ function streamChat(messages, onDelta) {
     const reader = resp.body.getReader();
     const dec = new TextDecoder();
     let buffer = '', full = '';
-    for (;;) {
-      const r = await reader.read();
-      if (r.done) break;
-      buffer += dec.decode(r.value, { stream: true });
-      let idx;
-      while ((idx = buffer.indexOf('\n')) >= 0) {
-        const line = buffer.slice(0, idx).trim();
-        buffer = buffer.slice(idx + 1);
-        if (!line.startsWith('data:')) continue;
-        const payload = line.slice(5).trim();
-        if (!payload || payload === '[DONE]') continue;
-        try {
-          const json = JSON.parse(payload);
-          const delta = json.choices && json.choices[0] && json.choices[0].delta;
-          const piece = delta && delta.content;
-          if (piece) { full += piece; onDelta(full); }
-        } catch (e) { /* 分片偶发解析异常忽略，不影响后续 */ }
+    try {
+      for (;;) {
+        const r = await reader.read();
+        if (r.done) break;
+        buffer += dec.decode(r.value, { stream: true });
+        let idx;
+        while ((idx = buffer.indexOf('\n')) >= 0) {
+          const line = buffer.slice(0, idx).trim();
+          buffer = buffer.slice(idx + 1);
+          if (!line.startsWith('data:')) continue;
+          const payload = line.slice(5).trim();
+          if (!payload || payload === '[DONE]') continue;
+          try {
+            const json = JSON.parse(payload);
+            const delta = json.choices && json.choices[0] && json.choices[0].delta;
+            const piece = delta && delta.content;
+            if (piece) { full += piece; onDelta(full); }
+          } catch (e) { /* 分片偶发解析异常忽略，不影响后续 */ }
+        }
       }
+      return full;
+    } finally {
+      // 正常结束或 abort/异常都释放底层连接，避免流挂起
+      reader.cancel().catch(() => {});
     }
-    return full;
   });
 }
 
@@ -3018,7 +3036,9 @@ function setDark(v) {
 const Timer = {
   endAt: 0, remain: 0, intervalId: null, running: false,
   overMode: false,  // 倒计时归零后进入"超时正计时"（只能由归零自动触发）
-  overAt: 0
+  overAt: 0,
+  paused: false,    // 暂停态（倒计时/超时正计时通用）
+  overElapsed: 0    // 超时正计时暂停时冻结的累计秒数
 };
 const tH = $('#tH'), tM = $('#tM'), tS = $('#tS'), tTime = $('#timerTime'), tTag = $('#timerTag');
 
@@ -3044,7 +3064,9 @@ function readInputs() {
 function renderTimerTime() {
   const box = tTime.parentElement;
   if (Timer.overMode) {
-    const over = Math.floor((Date.now() - Timer.overAt) / 1000);
+    const over = Timer.paused
+      ? Timer.overElapsed
+      : Math.floor((Date.now() - Timer.overAt) / 1000);
     tTime.textContent = '+' + fmtTime(over);
     tTag.style.display = 'inline-block';
     box.classList.add('over');
@@ -3056,11 +3078,14 @@ function renderTimerTime() {
 }
 /* 小面板视图：未开始显示"时/分/秒 + 开始"；进行中/超时显示"大号时间 + 重置" */
 function applyTimerView() {
-  const active = Timer.running || Timer.overMode;
-  $('#timerBtn').classList.toggle('running', Timer.running || Timer.overMode);
+  const active = Timer.running || Timer.overMode || Timer.paused;
+  // 暂停态不绿，运行/超时走时才绿
+  $('#timerBtn').classList.toggle('running', (Timer.running || Timer.overMode) && !Timer.paused);
   $('#tpInputs').hidden = active;
   $('#tpTime').style.display = active ? 'flex' : 'none';
   $('#tStart').hidden = active;
+  $('#tPause').hidden = !active;
+  $('#tPause').textContent = Timer.paused ? '继续' : '暂停';
   $('#tReset').hidden = !active;
 }
 function positionTimerPanel() {
@@ -3085,7 +3110,7 @@ function positionTimerPanel() {
 }
 function openTimerPanel() {
   if (!Timer.running && Timer.remain === 0 && !Timer.overMode) tTime.textContent = fmtTime(readInputs());
-  if (Timer.overMode) renderTimerTime(); // 重新打开面板时显示最新超时读数
+  if (Timer.overMode || Timer.paused) renderTimerTime(); // 重开面板显示最新/冻结读数
   $('#swPanel').classList.remove('show'); // 打开倒计时时收起秒表
   applyTimerView();
   $('#timerPanel').classList.add('show');
@@ -3093,6 +3118,7 @@ function openTimerPanel() {
 }
 function closeTimerPanel() { $('#timerPanel').classList.remove('show'); }
 function timerTick() {
+  if (Timer.paused) return; // 暂停期间不计时
   // 超时正计时：自动累加，直到用户重新设置并开始新一轮
   if (Timer.overMode) { renderTimerTime(); return; }
   Timer.remain = Math.max(0, Math.round((Timer.endAt - Date.now()) / 1000));
@@ -3105,9 +3131,11 @@ function startTimer() {
   if (!secs) { toast('请先设置倒计时时长'); return; }
   // 在用户点击手势内预创建 AudioContext 并预解码电铃，保证归零时立即响铃
   preloadAlarm();
-  // 新一轮倒计时：清掉上一次的超时正计时
+  // 新一轮倒计时：清掉上一次的超时正计时与暂停态
   Timer.overMode = false;
   Timer.overAt = 0;
+  Timer.paused = false;
+  Timer.overElapsed = 0;
   Timer.remain = secs;
   Timer.endAt = Date.now() + secs * 1000;
   Timer.running = true;
@@ -3124,6 +3152,8 @@ function resetTimer() {
   Timer.remain = 0;
   Timer.overMode = false;
   Timer.overAt = 0;
+  Timer.paused = false;
+  Timer.overElapsed = 0;
   tTime.textContent = fmtTime(readInputs());
   renderTimerTime();
   applyTimerView();
@@ -3135,6 +3165,8 @@ function finishTimer() {
   if (Timer.intervalId) clearInterval(Timer.intervalId);
   Timer.running = false;
   Timer.remain = 0;
+  Timer.paused = false;
+  Timer.overElapsed = 0;
   // 归零瞬间自动启动"超时正计时"（唯一触发方式：倒计时归零；关闭弹窗、关闭面板也在后台继续）
   Timer.overMode = true;
   Timer.overAt = Date.now();
@@ -3145,6 +3177,37 @@ function finishTimer() {
   // 弹窗居中 + 持续循环提示音（关弹窗即停）
   $('#timerModal').classList.add('show');
   startAlarm();
+}
+/* 暂停：倒计时冻结剩余秒数，超时正计时冻结累计秒数，停掉定时器 */
+function pauseTimer() {
+  if (Timer.paused) return;
+  if (Timer.intervalId) { clearInterval(Timer.intervalId); Timer.intervalId = null; }
+  if (Timer.overMode) {
+    Timer.overElapsed = Math.floor((Date.now() - Timer.overAt) / 1000);
+  } else if (Timer.running) {
+    Timer.remain = Math.max(0, Math.round((Timer.endAt - Date.now()) / 1000));
+    Timer.running = false;
+  }
+  Timer.paused = true;
+  renderTimerTime();
+  applyTimerView();
+  positionTimerPanel();
+}
+/* 继续：超时正计时前移基准保持累计连续，倒计时按剩余秒重设截止，重启定时器 */
+function resumeTimer() {
+  if (!Timer.paused) return;
+  if (Timer.overMode) {
+    Timer.overAt = Date.now() - Timer.overElapsed * 1000;
+  } else {
+    Timer.endAt = Date.now() + Timer.remain * 1000;
+    Timer.running = true;
+  }
+  Timer.paused = false;
+  if (Timer.intervalId) clearInterval(Timer.intervalId);
+  Timer.intervalId = setInterval(timerTick, 250);
+  renderTimerTime();
+  applyTimerView();
+  positionTimerPanel();
 }
 
 /* ---- 超时提示音：内联"考试电铃"样本（Web Audio 无缝循环），仅超时弹窗期间响，关弹窗即停 ---- */
@@ -3376,6 +3439,7 @@ $('#timerBtn').onclick = ev => {
 $('#timerClose').onclick = () => closeTimerPanel();
 $('#tStart').onclick = startTimer;
 $('#tReset').onclick = resetTimer;
+$('#tPause').onclick = () => (Timer.paused ? resumeTimer() : pauseTimer());
 // 视口变化时重新定位（面板打开时）
 window.addEventListener('resize', () => { if ($('#timerPanel').classList.contains('show')) positionTimerPanel(); });
 window.addEventListener('scroll', () => { if ($('#timerPanel').classList.contains('show')) positionTimerPanel(); }, true);
