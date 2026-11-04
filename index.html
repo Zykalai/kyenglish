@@ -2832,7 +2832,7 @@ $('#aicFontInc').onclick = () => setAiFontSize(aiFontSize + 1);
 function askAi(kind, content) {
   openAiPanel();
   // 不区分单词/句子，统一前缀；引号仅用于界定被讲解的内容
-  const prompt = '请帮我讲解“' + content + '”';
+  const prompt = '请为我讲解“' + content + '”';
   // 讲解为预设自动发送，与输入框无关：无条件清空，避免残留追问/未发送的草稿
   aiInput.value = '';
   aiInput.style.height = 'auto';
