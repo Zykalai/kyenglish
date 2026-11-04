@@ -110,7 +110,8 @@ button{font-family:inherit;cursor:pointer;}
   background:var(--topbar-bg);color:#f3eee2;
   border-bottom:2px solid var(--topbar-line);
 }
-#topbar .brand{font-family:Georgia,"Times New Roman",serif;font-size:17px;letter-spacing:.5px;white-space:nowrap;}
+#topbar .brand{font-family:Georgia,"Times New Roman",serif;font-size:17px;letter-spacing:.5px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
 #topbar .brand .brand-short{display:none;}
 #topbar .tb-btn .lbl-s{display:none;}
 #topbar .brand small{color:#b9b09c;font-size:11px;letter-spacing:2px;margin-left:8px;font-family:inherit;}
@@ -609,7 +610,9 @@ body.aic-dragging-move,body.aic-dragging-move *{cursor:move !important;}
     overscroll-behavior-x:contain;scrollbar-width:none;}
   #topbar::-webkit-scrollbar{display:none;}
   #topbar > *{flex-shrink:0;}
-  #topbar .brand{flex-shrink:1;min-width:0;}
+  #topbar .spacer{display:none;}
+  #topbar .brand{flex-shrink:0;min-width:0;max-width:36vw;overflow:hidden;text-overflow:ellipsis;}
+  #fontControls{flex-shrink:0;}
   #topbar .brand small,#fontVal{display:none;}
   #topbar .brand .brand-long{display:none;}
   #topbar .brand .brand-short{display:inline;}
@@ -675,7 +678,7 @@ body.aic-dragging-move,body.aic-dragging-move *{cursor:move !important;}
   <button class="tb-btn" id="menuBtn" aria-label="目录">目录</button>
   <div class="brand"><span class="brand-long">考研英语二 · 真题划词精读</span><span class="brand-short">英语二真题</span><small>ENGLISH II 2010–2026</small></div>
   <div class="spacer"></div>
-  <div id="fontControls" class="tb-btn" style="border:0;padding:0;">
+  <div id="fontControls">
     <button class="tb-btn" id="fontDec" title="减小字号">A−</button>
     <span id="fontVal">19</span>
     <button class="tb-btn" id="fontInc" title="增大字号">A+</button>
