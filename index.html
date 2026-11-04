@@ -3057,7 +3057,7 @@ function renderTimerTime() {
 /* 小面板视图：未开始显示"时/分/秒 + 开始"；进行中/超时显示"大号时间 + 重置" */
 function applyTimerView() {
   const active = Timer.running || Timer.overMode;
-  $('#timerBtn').classList.toggle('running', Timer.running);
+  $('#timerBtn').classList.toggle('running', Timer.running || Timer.overMode);
   $('#tpInputs').hidden = active;
   $('#tpTime').style.display = active ? 'flex' : 'none';
   $('#tStart').hidden = active;
