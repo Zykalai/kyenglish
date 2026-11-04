@@ -440,11 +440,6 @@ body.dark #swBtn.running,body.dark #timerBtn.running{color:#152922;}
 #transPop .tp-pop-body{padding:13px 16px;font-size:15px;line-height:1.75;color:var(--ink);}
 #transPop .tp-loading{color:var(--pine);font-size:13px;}
 #transPop .tp-error{color:#b04a3a;font-size:13px;}
-#transPop .tp-pop-foot{display:flex;border-top:1px solid var(--rule);background:var(--bubble-act);}
-#transPop .tp-pop-foot button{flex:1;border:0;background:transparent;padding:9px 0;
-  font-size:13px;color:var(--pine);cursor:pointer;}
-#transPop .tp-pop-foot button:hover{background:var(--pine-soft);color:var(--ink);}
-#transPop .tp-pop-foot #tpAiCustomBtn{border-left:1px solid var(--rule);}
 
 /* ============================================================
    豆包 AI 迷你聊天窗（本地自用，右下角；多轮/流式/收起）
@@ -727,7 +722,6 @@ body.aic-dragging-move,body.aic-dragging-move *{cursor:move !important;}
 <div id="transPop">
   <div class="tp-pop-head"><span id="transSrc">译文</span><button id="transClose" aria-label="关闭">×</button></div>
   <div class="tp-pop-body" id="transBody"></div>
-  <div class="tp-pop-foot"><button id="tpAiBtn">讲解</button><button id="tpAiCustomBtn">追问</button></div>
 </div>
 
 <!-- 豆包 AI 迷你聊天窗（本地自用版，右下角，支持多轮/流式/收起） -->
@@ -1711,6 +1705,12 @@ function renderPaper(year) {
 /* ============================================================
  * 路由
  * ============================================================ */
+/* 强制滚动到目标板块开头；reading 对应 sec-reading1。hash 是否变化都可调用，保证导航绝对准确 */
+function gotoSection(secKey) {
+  const secId = 'sec-' + (secKey === 'reading' ? 'reading1' : secKey);
+  const el = document.getElementById(secId);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 function route() {
   const hash = location.hash.replace(/^#\//, '');
   const parts = hash.split('/');
@@ -1723,14 +1723,7 @@ function route() {
       $('#paperView').style.display = 'block';
       clearTransient();
     }
-    if (parts[1]) {
-      setTimeout(() => {
-        let secId = 'sec-' + parts[1];
-        if (parts[1] === 'reading') secId = 'sec-reading1';
-        const el = document.getElementById(secId);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 80);
-    }
+    if (parts[1]) setTimeout(() => gotoSection(parts[1]), 80);
   } else {
     state.view = 'home'; state.year = null;
     $('#paperView').style.display = 'none';
@@ -1766,6 +1759,21 @@ function setupScrollSpy() {
   }, { rootMargin: '-20% 0px -70% 0px' });
   map.forEach(m => { if (m.el) scrollSpyObs.observe(m.el); });
 }
+
+/* 题型 tab 点击委托（#paperView 稳定，#secTabs 重建不影响）：
+   已在该板块时 hash 不变、hashchange 不触发，这里强制滚动，保证每次点击都准确跳到板块开头 */
+$('#paperView').addEventListener('click', ev => {
+  const t = ev.target;
+  const a = (t && t.closest) ? t.closest('#secTabs a') : null;
+  if (!a) return;
+  ev.preventDefault();
+  const sec = a.getAttribute('data-sec');
+  $$('#secTabs a').forEach(x => x.classList.remove('active'));
+  a.classList.add('active'); // 立即高亮，不等 scroll spy
+  const targetHash = '#/' + state.year + '/' + sec;
+  if (location.hash === targetHash) gotoSection(sec); // hash 未变，强制滚动
+  else location.hash = targetHash;                    // hash 变化 → route → gotoSection
+});
 
 /* ============================================================
  * 交互层：单词气泡、生词/句子收藏、黑夜模式、倒计时、工具条
@@ -2406,20 +2414,6 @@ function runTranslate() {
   });
 }
 $('#transClose').onclick = () => hideTransPop();
-$('#tpAiBtn').onclick = () => {
-  if (currentSel) {
-    const text = currentSel.text;
-    hideTransPop(); // 点讲解后关闭翻译框
-    askAi('sentence', text);
-  }
-};
-$('#tpAiCustomBtn').onclick = () => {
-  if (currentSel) {
-    const text = currentSel.text;
-    hideTransPop(); // 点追问后关闭翻译框，转到输入框自己写
-    askAiCustom('sentence', text);
-  }
-};
 
 /* ============================================================
  * 豆包 AI 迷你聊天：流式调用火山方舟，多轮上下文，安全渲染
@@ -2831,6 +2825,7 @@ $('#aicFontInc').onclick = () => setAiFontSize(aiFontSize + 1);
    开场只发一句简短请求，后续由用户自己追问。 */
 function askAi(kind, content) {
   openAiPanel();
+  hideTransPop(); // 跳转 AI 窗即关闭翻译框，任何入口都生效
   // 不区分单词/句子，统一前缀；引号仅用于界定被讲解的内容
   const prompt = '请为我讲解“' + content + '”';
   // 讲解为预设自动发送，与输入框无关：无条件清空，避免残留追问/未发送的草稿
@@ -2843,6 +2838,7 @@ function askAi(kind, content) {
    光标定位到末尾，用户自己补充想问的内容后手动发送 */
 function askAiCustom(kind, content) {
   openAiPanel();
+  hideTransPop(); // 跳转 AI 窗即关闭翻译框，任何入口都生效
   // 不区分单词/句子，统一"关于…"；引号仅界定引用内容
   const ref = '关于“' + content + '”，';
   aiInput.value = ref;
