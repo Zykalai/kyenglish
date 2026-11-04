@@ -2827,13 +2827,12 @@ setAiFontSize(aiFontSize);
 $('#aicFontDec').onclick = () => setAiFontSize(aiFontSize - 1);
 $('#aicFontInc').onclick = () => setAiFontSize(aiFontSize + 1);
 
-/* 三个入口统一调用：kind=word 讲解单词，kind=sentence 讲解句子。
+/* 三个入口统一调用：单词/句子统一开场请求，不再区分类型。
    开场只发一句简短请求，后续由用户自己追问。 */
 function askAi(kind, content) {
   openAiPanel();
-  const prompt = kind === 'word'
-    ? '请帮我讲解这个单词：“' + content + '”'
-    : '请帮我讲解这个句子：“' + content + '”';
+  // 不区分单词/句子，统一前缀；引号仅用于界定被讲解的内容
+  const prompt = '请帮我讲解“' + content + '”';
   // 讲解为预设自动发送，与输入框无关：无条件清空，避免残留追问/未发送的草稿
   aiInput.value = '';
   aiInput.style.height = 'auto';
@@ -2844,9 +2843,8 @@ function askAi(kind, content) {
    光标定位到末尾，用户自己补充想问的内容后手动发送 */
 function askAiCustom(kind, content) {
   openAiPanel();
-  const ref = kind === 'word'
-    ? '关于单词“' + content + '”，'
-    : '关于句子“' + content + '”，';
+  // 不区分单词/句子，统一"关于…"；引号仅界定引用内容
+  const ref = '关于“' + content + '”，';
   aiInput.value = ref;
   autoGrowInput();
   aiInput.focus();
