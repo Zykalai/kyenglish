@@ -2879,14 +2879,22 @@ aiStopBtn.onclick = ev => {
   ev.stopPropagation();
   stopStreaming(); // 只打断当前回答，不发新问题
 };
-aiSendBtn.onclick = () => {
+let lastAiSendAt = 0;
+function doAiSend() {
+  const now = Date.now();
+  if (now - lastAiSendAt < 400) return; // pointerdown 之后还会合成一次 click，去重避免连发两条
+  lastAiSendAt = now;
   const v = aiInput.value;
   aiInput.value = '';
   aiInput.style.height = 'auto';
   // 移动端软键盘发送后键盘收起，会有合成点击落到新露出的正文，短窗口屏蔽避免穿透查词
   if (smallScreen()) blockLookupUntil = Date.now() + 600;
   sendUserMessage(v, false);
-};
+}
+aiSendBtn.onclick = doAiSend;
+// 软键盘聚焦时，蓝牙鼠标/触摸首次点击常被浏览器先用于收起输入法、随后布局重排取消 click，导致要按两次；
+// pointerdown 在按下瞬间（早于 blur 与 click）抢先发送，去重锁拦截随后合成 click，点一次即发且不重复
+aiSendBtn.addEventListener('pointerdown', () => doAiSend(), { passive: true });
 aiInput.addEventListener('keydown', ev => {
   if (ev.key === 'Enter' && !ev.shiftKey) {
     ev.preventDefault();
