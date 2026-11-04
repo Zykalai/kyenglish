@@ -380,10 +380,8 @@ body.dark .tp2-time.over #timerTime{color:#e07a5f;}
 .sw-time{display:flex;justify-content:center;align-items:center;
   font-family:Georgia,serif;font-size:26px;font-weight:700;margin:6px 0 12px;
   color:var(--pine);font-variant-numeric:tabular-nums;white-space:nowrap;}
-/* 运行中：秒表按钮高亮 + 尾部小圆点，一眼能看出在计时 */
-#swBtn.running{background:var(--pine);border-color:var(--pine);color:#fff;}
-#swBtn.running::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;
-  background:#fff;margin-left:6px;vertical-align:middle;}
+/* 运行中：秒表 / 倒计时按钮仅变绿色，不改变尺寸 */
+#swBtn.running,#timerBtn.running{background:var(--pine);border-color:var(--pine);color:#fff;}
 /* 考研核心徽章 */
 .wb-ky{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:var(--pine);
   border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:middle;}
@@ -3059,6 +3057,7 @@ function renderTimerTime() {
 /* 小面板视图：未开始显示"时/分/秒 + 开始"；进行中/超时显示"大号时间 + 重置" */
 function applyTimerView() {
   const active = Timer.running || Timer.overMode;
+  $('#timerBtn').classList.toggle('running', Timer.running);
   $('#tpInputs').hidden = active;
   $('#tpTime').style.display = active ? 'flex' : 'none';
   $('#tStart').hidden = active;
