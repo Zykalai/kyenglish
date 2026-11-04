@@ -2050,8 +2050,7 @@ function nowHHMM() {
   const d = new Date();
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
-const FAV_MAX = 300;
-function saveFavorites() { lsSet('e2_favorites', state.favorites.slice(0, FAV_MAX)); }
+function saveFavorites() { lsSet('e2_favorites', state.favorites); }
 function isWordFav(lemma) {
   return state.favorites.some(f => f.type === 'word' && f.lemma === lemma);
 }
@@ -2061,10 +2060,6 @@ function toggleWordFav(lk) {
     state.favorites.splice(i, 1);
     saveFavorites();
     toast('已取消收藏');
-    return false;
-  }
-  if (state.favorites.length >= FAV_MAX) {
-    toast('收藏已达上限 ' + FAV_MAX + ' 条，请先删除部分收藏再添加');
     return false;
   }
   const e = lk.entry;
@@ -2084,10 +2079,6 @@ function addSentFav(text, label) {
   const norm = text.replace(/\s+/g, ' ').trim();
   if (state.favorites.some(f => f.type === 'sent' && f.text === norm)) {
     toast('该句子已收藏过');
-    return false;
-  }
-  if (state.favorites.length >= FAV_MAX) {
-    toast('收藏已达上限 ' + FAV_MAX + ' 条，请先删除部分收藏再添加');
     return false;
   }
   state.favorites.unshift({ type: 'sent', text: norm, label: label || '', time: nowHHMM() });
