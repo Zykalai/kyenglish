@@ -1,14 +1,16 @@
 /* Cloudflare Pages Functions proxy for the exam reader.
  *
- * The static site stays on GitHub Pages. This Pages project only exposes
- * POST /chat/completions and injects the Volcengine Ark key on the server.
+ * Browser -> this Pages project (*.pages.dev) -> existing Cloudflare Worker
+ * -> Volcengine Ark. The Worker keeps the Ark key; this project needs no
+ * secret. The extra hop is inside Cloudflare and is not subject to the
+ * browser-side workers.dev block.
  *
  * Pages settings:
- *   VOLC_API_KEY  = <your Ark API key>          (secret)
- *   ALLOW_ORIGIN  = https://ab123666.github.io,null   (optional)
+ *   WORKER_URL   = https://kyenglish.a965684016.workers.dev   (optional)
+ *   ALLOW_ORIGIN = https://ab123666.github.io,null           (optional)
  */
 
-const UPSTREAM = "https://ark.cn-beijing.volces.com/api/v3/chat/completions";
+const DEFAULT_WORKER = "https://kyenglish.a965684016.workers.dev";
 const DEFAULT_ALLOW = "https://ab123666.github.io,null";
 
 function cors(request, env) {
@@ -54,22 +56,20 @@ export default {
     if (request.method !== "POST" || url.pathname !== "/chat/completions") {
       return json({ error: "Not found" }, 404, headers);
     }
-    if (!env.VOLC_API_KEY) {
-      return json({ error: "VOLC_API_KEY is not configured" }, 500, headers);
-    }
+
     const body = await request.text();
     if (!body) {
       return json({ error: "Empty request body" }, 400, headers);
     }
 
+    const workerBase = String(env.WORKER_URL || DEFAULT_WORKER).replace(/\/+$/, "");
     let upstream;
     try {
-      upstream = await fetch(env.ARK_URL || UPSTREAM, {
+      upstream = await fetch(workerBase + "/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Accept": "text/event-stream",
-          "Authorization": `Bearer ${env.VOLC_API_KEY}`,
         },
         body,
       });

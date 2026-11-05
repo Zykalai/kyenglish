@@ -79,22 +79,21 @@ CI 不依赖 spaCy/ECDICT，不需要 66MB 原始词典；它验证的是已提�
 ## 网络配置
 
 - **划句翻译**：只走 Google 神经翻译；失败时显示“网络不通畅”提示，不做其他回退。
-- **AI 窗口**：默认走 `https://kyenglish.a965684016.workers.dev`。如果当前网络访问 `workers.dev` 不稳定，可以在页面加载前设置自定义 Worker 地址：
+- **AI 窗口**：默认走已部署的 Pages 代理 `https://kyenglish-ai-proxy.pages.dev`；Pages Functions 在 Cloudflare 内部再转发到 Worker，浏览器不需要访问 `workers.dev`。Ark Key 仍只存在 Worker 服务端。
+- **回退**：如果 Pages 不可用，可在页面加载前设置：
 
 ```js
-window.DSH_AI_BASE_URL = 'https://your-worker.example.com';
+window.DSH_AI_BASE_URL = 'https://kyenglish.a965684016.workers.dev';
 ```
 
 或加载后在控制台执行：
 
 ```js
-localStorage.setItem('e2_aiBaseUrl', 'https://your-worker.example.com');
+localStorage.setItem('e2_aiBaseUrl', 'https://kyenglish.a965684016.workers.dev');
 location.reload();
 ```
 
-`workers.dev` 在部分网络不可达。不要把 API Key 放到前端；优先给现有 Worker 绑定自定义域名（Cloudflare Dashboard → Worker → Settings → Domains & Routes），仍不通就在国内云/服务器上做一个反代，转发到 `ark.cn-beijing.volces.com`，密钥放服务端。
-
-如果 `*.pages.dev` 在当前网络可达，可以直接用 [`deploy/pages-proxy`](../../deploy/pages-proxy/) 的 Cloudflare Pages 代理，0 成本、不需要域名。
+不要把 API Key 放到前端。Pages 代理的源码和部署步骤见 [`deploy/pages-proxy`](../../deploy/pages-proxy/)；如果以后 `pages.dev` 也不可达，再考虑自定义域名或国内反代。
 
 ## 覆盖
 

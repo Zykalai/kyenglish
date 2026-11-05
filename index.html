@@ -1670,11 +1670,11 @@ $('#paperView').addEventListener('click', ev => {
  *           否则密钥泄露可能产生调用费用。
  * 申请入口：火山引擎方舟控制台 →「API Key 管理」+「在线推理」接入点
  * ============================================================ */
-/* API 走 Cloudflare Worker 代理：真实 Key 只存 Worker 服务端环境变量，
- * 前端零密钥，浏览器/抓包均拿不到 Key，可安全部署到 GitHub Pages 公开分享。
- * 如果 workers.dev 在当前网络不可达，可把 baseUrl 指到自己的 Worker 自定义域名：
- *   window.DSH_AI_BASE_URL = 'https://your-worker.example.com';  // 页面加载前
- *   localStorage.setItem('e2_aiBaseUrl', 'https://your-worker.example.com'); // 加载后刷新
+/* API 默认走 Cloudflare Pages 代理（*.pages.dev 在多数国内网络可达），
+ * Pages Functions 再转发到 Worker，真实 Key 只存 Worker 服务端，前端零密钥。
+ * 如果 Pages 不可用，可把 baseUrl 指回 Worker 或其他代理：
+ *   window.DSH_AI_BASE_URL = 'https://kyenglish.a965684016.workers.dev';  // 页面加载前
+ *   localStorage.setItem('e2_aiBaseUrl', 'https://kyenglish.a965684016.workers.dev'); // 加载后刷新
  */
 function getAiBaseOverride() {
   try {
@@ -1694,7 +1694,7 @@ function getAiBaseOverride() {
 const AI_BASE_URL = String(
   (typeof window !== 'undefined' && window.DSH_AI_BASE_URL) ||
   getAiBaseOverride() ||
-  'https://kyenglish.a965684016.workers.dev'
+  'https://kyenglish-ai-proxy.pages.dev'
 ).trim().replace(/\/+$/, '');
 const DOUBAO_CONFIG = {
   endpointId: 'ep-20261104014041-94z74', // DeepSeek 接入点
@@ -2424,7 +2424,7 @@ function renderMarkdown(src) {
 function aiErrorText(e) {
   if (/未配置/.test(e.message)) return e.message;
   if (e.name === 'TypeError' || /Failed to fetch|NetworkError|Load failed/i.test(e.message)) {
-    return 'AI 服务连接不通：当前网络可能无法访问 workers.dev。可设置 e2_aiBaseUrl 指向国内代理后重试。';
+    return 'AI 服务连接不通：当前网络可能访问不了默认的 pages.dev 代理。可设置 e2_aiBaseUrl 指向其他代理后重试。';
   }
   return '调用失败，请检查网络或配置后重试（' + e.message + '）';
 }
