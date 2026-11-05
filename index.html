@@ -1712,30 +1712,35 @@ const TRANSLATE_BASE_URL = (
   'https://kyenglish-ai-proxy.pages.dev'
 ).replace(/\/+$/, '');
 
-/* 卷面外单词：懒加载预生成词形索引 + ECDICT 高频释义。
+/* 卷面外单词：按首字母懒加载预生成词形索引 + ECDICT 高频释义。
    用 <script> 而不是 fetch：本地 file:// 打开也能加载，GitHub Pages 也能缓存。 */
-const LIVE_DICT_URL = 'data/live-dict.js';
-let liveDict = null;
-let liveDictPromise = null;
-function loadLiveDict() {
-  if (liveDict) return Promise.resolve(liveDict);
-  if (!liveDictPromise) {
-    liveDictPromise = new Promise((resolve, reject) => {
+const LIVE_DICT_DIR = 'data/live-dict/';
+const liveDictParts = {};
+const liveDictPromises = {};
+function livePartKey(raw) {
+  const first = normalizeLiveWord(raw).slice(0, 1);
+  return /^[a-z]$/.test(first) ? first : '_';
+}
+function loadLiveDict(part) {
+  if (liveDictParts[part]) return Promise.resolve(liveDictParts[part]);
+  if (!liveDictPromises[part]) {
+    liveDictPromises[part] = new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = LIVE_DICT_URL;
+      script.src = LIVE_DICT_DIR + part + '.js';
       script.onload = () => {
-        if (window.__LIVE_DICT__) {
-          liveDict = window.__LIVE_DICT__;
-          resolve(liveDict);
+        const data = window.__LIVE_DICT_PARTS__ && window.__LIVE_DICT_PARTS__[part];
+        if (data) {
+          liveDictParts[part] = data;
+          resolve(data);
         } else {
-          reject(new Error('live dictionary missing'));
+          reject(new Error('live dictionary part missing'));
         }
       };
       script.onerror = () => reject(new Error('live dictionary load failed'));
       document.head.appendChild(script);
-    }).catch(err => { liveDictPromise = null; throw err; });
+    }).catch(err => { liveDictPromises[part] = null; throw err; });
   }
-  return liveDictPromise;
+  return liveDictPromises[part];
 }
 
 /* 调用层人设：只拼进每次 API 请求的 messages，不写入 aiHistory，也不在页面上显示。 */
@@ -2025,7 +2030,7 @@ function showLiveBubble(hit) {
   bubble.style.display = 'block';
   bubble.innerHTML = '<div class="wb-loading">词典加载中…</div>';
   positionPop(bubble, rect);
-  loadLiveDict().then(dict => {
+  loadLiveDict(livePartKey(hit.raw)).then(dict => {
     if (bubbleWord !== key) return;
     const cands = liveCandidates(dict, hit.raw);
     if (!cands.length) {

@@ -99,4 +99,4 @@ location.reload();
 
 当前 17 套卷子共 64,194 个可点击词位、9,902 个 surface 键、6,055 个词条；`verify.py` 会逐词检查「卷面每个单词都有词典释义」。
 
-卷面外的点词卡片走懒加载的 `data/live-dict.js`（约 5.7 万高频词条 / 9.3 万个词形），由 `tools/lexicon/build_live.py` 生成；卷面词仍然只走静态 `lexicon.json` / `wordmap.json`，不请求这个文件。
+卷面外的点词卡片按首字母懒加载 `data/live-dict/<letter>.js`（合计约 5.7 万高频词条 / 9.3 万个词形），由 `tools/lexicon/build_live.py` 生成；卷面词仍然只走静态 `lexicon.json` / `wordmap.json`，不请求这些文件。

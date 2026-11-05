@@ -1,14 +1,12 @@
 """Build the lazy-loaded dictionary used for words outside the exam paper.
 
-Output: data/live-dict.js (a global window.__LIVE_DICT__ object).
+Output: data/live-dict/<letter>.js, one small script per first letter.
+The paper still uses lexicon.json / wordmap.json; page.html stays small.
 
-It is intentionally a separate asset: the paper still uses lexicon.json /
-wordmap.json, and page.html stays small. The live asset covers high-frequency
-single-word ECDICT entries plus every lemma used by the papers. Forms are
-generated with Lemminflect and merged with ECDICT's exchange field.
-
-The page shows multiple candidates; candidates are ordered by ECDICT frequency
-(lower frq/bnc rank first). No context is used here.
+Coverage: high-frequency single-word ECDICT entries plus every lemma used by
+the papers. Forms are generated with Lemminflect and merged with ECDICT's
+exchange field. Candidates are ordered by ECDICT frequency (lower frq/bnc rank
+first); no context is used.
 """
 import collections
 import csv
@@ -20,7 +18,7 @@ from lemminflect import getAllInflections
 BASE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ECDICT = os.path.join(BASE, "data", "dict", "ecdict.csv")
 LEXICON = os.path.join(BASE, "data", "lexicon", "lexicon.json")
-OUT = os.path.join(BASE, "data", "live-dict.js")
+OUTDIR = os.path.join(BASE, "data", "live-dict")
 
 
 def rank(row):
@@ -33,6 +31,11 @@ def rank(row):
         if value > 0:
             vals.append(value)
     return min(vals) if vals else 10 ** 9
+
+
+def part_of(surface):
+    first = surface[:1]
+    return first if "a" <= first <= "z" else "_"
 
 
 def main():
@@ -95,12 +98,30 @@ def main():
         if unique:
             ranked[surface] = unique
 
-    with open(OUT, "w", encoding="utf-8") as f:
-        f.write("window.__LIVE_DICT__=")
-        json.dump({"forms": ranked, "entries": entries}, f,
-                  ensure_ascii=False, separators=(",", ":"))
-        f.write(";")
-    print(f"lemmas={len(entries)} surfaces={len(ranked)} bytes={os.path.getsize(OUT)}")
+    groups = collections.defaultdict(lambda: {"forms": {}, "entries": {}})
+    for surface, lemmas in ranked.items():
+        group = groups[part_of(surface)]
+        group["forms"][surface] = lemmas
+        for lemma in lemmas:
+            if lemma in entries:
+                group["entries"][lemma] = entries[lemma]
+
+    os.makedirs(OUTDIR, exist_ok=True)
+    for old in os.listdir(OUTDIR):
+        if old.endswith(".js"):
+            os.remove(os.path.join(OUTDIR, old))
+    total = 0
+    for part in sorted(groups):
+        path = os.path.join(OUTDIR, part + ".js")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("window.__LIVE_DICT_PARTS__=window.__LIVE_DICT_PARTS__||{};")
+            f.write("window.__LIVE_DICT_PARTS__[")
+            f.write(json.dumps(part))
+            f.write("]=")
+            json.dump(groups[part], f, ensure_ascii=False, separators=(",", ":"))
+            f.write(";")
+        total += os.path.getsize(path)
+    print(f"lemmas={len(entries)} surfaces={len(ranked)} parts={len(groups)} bytes={total}")
 
 
 if __name__ == "__main__":

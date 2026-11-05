@@ -154,8 +154,10 @@ with sync_playwright() as p:
     txt = page.eval_on_selector("#wordBubble", "el => el.innerText")
     check("卷面点词弹出卡片", "tip" in txt and "考研" not in txt, txt[:80].replace("\n", " | "))
 
-    page.evaluate("loadLiveDict()")
-    page.wait_for_function("window.__LIVE_DICT__ && Object.keys(window.__LIVE_DICT__.entries).length > 0", timeout=30000)
+    page.evaluate("loadLiveDict('t')")
+    page.wait_for_function("window.__LIVE_DICT_PARTS__ && Object.keys(window.__LIVE_DICT_PARTS__.t.entries).length > 0", timeout=30000)
+    page.evaluate("loadLiveDict('f')")
+    page.wait_for_function("window.__LIVE_DICT_PARTS__ && Object.keys(window.__LIVE_DICT_PARTS__.f.entries).length > 0", timeout=30000)
     page.evaluate("document.getElementById('aiChat').hidden=false; document.getElementById('aiFab').hidden=true; appendMsg('ai','This is a test sentence for clicking.');")
     page.wait_for_timeout(300)
     page.eval_on_selector("#aicMessages .aic-ai", "el => el.scrollIntoView({block:'center'})")
