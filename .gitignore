@@ -4,6 +4,7 @@
 !/requirements.txt
 !/.gitattributes
 !/.github/
+!/deploy/
 !/src/
 !/tools/
 !/data/

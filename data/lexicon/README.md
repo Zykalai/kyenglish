@@ -94,6 +94,8 @@ location.reload();
 
 `workers.dev` 在部分网络不可达。不要把 API Key 放到前端；优先给现有 Worker 绑定自定义域名（Cloudflare Dashboard → Worker → Settings → Domains & Routes），仍不通就在国内云/服务器上做一个反代，转发到 `ark.cn-beijing.volces.com`，密钥放服务端。
 
+如果 `*.pages.dev` 在当前网络可达，可以直接用 [`deploy/pages-proxy`](../../deploy/pages-proxy/) 的 Cloudflare Pages 代理，0 成本、不需要域名。
+
 ## 覆盖
 
 当前 17 套卷子共 64,194 个可点击词位、9,902 个 surface 键、6,055 个词条；`verify.py` 会逐词检查「卷面每个单词都有词典释义」。
