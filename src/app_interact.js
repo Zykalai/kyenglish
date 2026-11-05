@@ -47,6 +47,32 @@ const TRANSLATE_BASE_URL = (
   'https://kyenglish-ai-proxy.pages.dev'
 ).replace(/\/+$/, '');
 
+/* 卷面外单词：懒加载预生成词形索引 + ECDICT 高频释义。
+   用 <script> 而不是 fetch：本地 file:// 打开也能加载，GitHub Pages 也能缓存。 */
+const LIVE_DICT_URL = 'data/live-dict.js';
+let liveDict = null;
+let liveDictPromise = null;
+function loadLiveDict() {
+  if (liveDict) return Promise.resolve(liveDict);
+  if (!liveDictPromise) {
+    liveDictPromise = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = LIVE_DICT_URL;
+      script.onload = () => {
+        if (window.__LIVE_DICT__) {
+          liveDict = window.__LIVE_DICT__;
+          resolve(liveDict);
+        } else {
+          reject(new Error('live dictionary missing'));
+        }
+      };
+      script.onerror = () => reject(new Error('live dictionary load failed'));
+      document.head.appendChild(script);
+    }).catch(err => { liveDictPromise = null; throw err; });
+  }
+  return liveDictPromise;
+}
+
 /* 调用层人设：只拼进每次 API 请求的 messages，不写入 aiHistory，也不在页面上显示。 */
 const AI_SYSTEM_PROMPT = [
   '你是一个考研英语讲解AI。只讲用户发来的英文，围绕它，不跑题。',
@@ -158,11 +184,18 @@ function bubbleHtml(lk) {
     body = `<div class="wb-loading">词典未收录该词。</div>`;
   }
   const faved = isWordFav(lk.lemma);
+  const cands = Array.isArray(lk.candidates) ? lk.candidates : [];
+  const tabs = cands.length > 1
+    ? `<div class="wb-lemmas">${cands.map((c, i) =>
+        `<button class="wb-lemma${i === (lk.active || 0) ? ' active' : ''}" data-li="${i}">${esc(c.lemma)}</button>`
+      ).join('')}</div>`
+    : '';
   return `<div class="wb-head">
       <div class="wb-word">${esc(lk.lemma)}${lemmaNote}
         ${e && e[1] ? `<div class="wb-phon">/${esc(e[1])}/</div>` : ''}
       </div>
     </div>
+    ${tabs}
     <div class="wb-body">${body}</div>
     <div class="wb-actions">
       <button id="wbSpeakBtn" class="icon-btn" title="朗读单词">${SPEAKER_ICON}</button>
@@ -212,6 +245,17 @@ function showBubbleAt(lk, rect) {
   bubble.style.display = 'block';
   positionPop(bubble, rect);
   bubbleCtx = lk;
+  bubble.querySelectorAll('.wb-lemma').forEach(btn => {
+    btn.onclick = ev => {
+      ev.stopPropagation();
+      const i = Number(btn.getAttribute('data-li'));
+      if (!lk.candidates || !lk.candidates[i]) return;
+      lk.active = i;
+      lk.lemma = lk.candidates[i].lemma;
+      lk.entry = lk.candidates[i].entry;
+      showBubbleAt(lk, rect);
+    };
+  });
   bindFavBtn(lk);
   bindSpeakBtn(lk.lemma);
   bindAiBtn(lk.lemma);
@@ -239,9 +283,12 @@ function wordAtPoint(x, y) {
     node = p.offsetNode; offset = p.offset;
   } else return null;
   if (node.nodeType !== 3) return null;
-  // 只在卷面（.can-lookup）内取词；AI 对话、收藏、目录、首页一律不弹单词卡
+  // 卷面 .can-lookup 走静态词典；AI 对话/收藏等 .can-lookup-live 走预生成索引
   const hostEl = node.parentElement;
-  if (!hostEl || !hostEl.closest || !hostEl.closest('.can-lookup')) return null;
+  if (!hostEl || !hostEl.closest) return null;
+  const staticHost = hostEl.closest('.can-lookup');
+  const liveHost = hostEl.closest('.can-lookup-live');
+  if (!staticHost && !liveHost) return null;
   const text = node.textContent;
   const isWord = c => /[A-Za-zÀ-ÖØ-öø-ÿ0-9'’&.\-]/.test(c);
   let s = offset, e = offset;
@@ -263,7 +310,71 @@ function wordAtPoint(x, y) {
   const sec = secEl ? secEl.id.replace(/^sec-/, '') : 'head';
   const blkEl = hostEl.closest('[data-blk]');
   const blk = blkEl ? blkEl.getAttribute('data-blk') : null;
-  return { raw, rect, sec, blk };
+  return { raw, rect, sec, blk, live: !staticHost };
+}
+
+function wordFromInput(el) {
+  const pos = el.selectionStart;
+  const text = String(el.value || '');
+  if (pos == null) return null;
+  const isWord = c => /[A-Za-zÀ-ÖØ-öø-ÿ0-9'’&.\-]/.test(c);
+  let s = pos, e = pos;
+  while (s > 0 && isWord(text[s - 1])) s--;
+  while (e < text.length && isWord(text[e])) e++;
+  const raw = text.slice(s, e).replace(/^[.'’&\-]+|[.'’&\-]+$/g, '');
+  if (!/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(raw)) return null;
+  const r = el.getBoundingClientRect();
+  return {
+    raw,
+    live: true,
+    rect: { left: r.left + 10, right: r.right - 10, top: r.top, bottom: r.bottom,
+      width: Math.max(80, Math.min(240, r.width - 20)), height: r.height }
+  };
+}
+
+function normalizeLiveWord(raw) {
+  let w = String(raw).toLowerCase()
+    .replace(/[’‘]/g, "'")
+    .replace(/^[^a-z]+|[^a-z']+$/g, '');
+  if (w.endsWith("'s")) w = w.slice(0, -2);
+  return w;
+}
+
+function liveCandidates(dict, raw) {
+  const w = normalizeLiveWord(raw);
+  if (!w) return [];
+  const lemmas = Array.isArray(dict.forms[w]) ? dict.forms[w].slice() : [];
+  if (dict.entries[w] && !lemmas.includes(w)) lemmas.unshift(w);
+  const out = [];
+  for (const lemma of lemmas) {
+    const entry = dict.entries[lemma];
+    if (entry) out.push({ lemma, entry });
+  }
+  return out;
+}
+
+function showLiveBubble(hit) {
+  const key = hit.raw.toLowerCase();
+  bubbleWord = key;
+  const rect = hit.rect;
+  bubble.style.display = 'block';
+  bubble.innerHTML = '<div class="wb-loading">词典加载中…</div>';
+  positionPop(bubble, rect);
+  loadLiveDict().then(dict => {
+    if (bubbleWord !== key) return;
+    const cands = liveCandidates(dict, hit.raw);
+    if (!cands.length) {
+      showBubbleAt({ key: hit.raw, lemma: normalizeLiveWord(hit.raw) || hit.raw,
+        entry: null, candidates: [], active: 0, kind: 'live' }, rect);
+      return;
+    }
+    showBubbleAt({ key: hit.raw, lemma: cands[0].lemma, entry: cands[0].entry,
+      candidates: cands, active: 0, kind: 'live' }, rect);
+  }).catch(() => {
+    if (bubbleWord !== key) return;
+    bubble.innerHTML = '<div class="wb-loading">词典加载失败，请稍后重试</div>';
+    positionPop(bubble, rect);
+  });
 }
 
 /* ---------------- 浮层定位 ---------------- */
@@ -374,7 +485,7 @@ function renderFavorites() {
     }
     const key = f.text.replace(/\s+/g, ' ').trim();
     return `<div class="wp-sent">
-      <div class="s-text can-select">${esc(f.text)}</div>
+      <div class="s-text can-select can-lookup-live">${esc(f.text)}</div>
       <div class="s-meta">
         <span>句子${f.label ? ' · ' + esc(f.label) : ''}</span>
         <span>${f.time || ''}</span>
@@ -586,6 +697,14 @@ const aiChat = $('#aiChat');
 const aiFab = $('#aiFab');
 const aiMessages = $('#aicMessages');
 const aiInput = $('#aicInput');
+// 输入框里点到英文单词，也弹实时词典卡（textarea 没有 DOM 文本节点）
+aiInput.addEventListener('click', ev => {
+  if (ev.offsetX > aiInput.clientWidth - 20) return;
+  setTimeout(() => {
+    const hit = wordFromInput(aiInput);
+    if (hit) showLiveBubble(hit);
+  }, 0);
+});
 const aiSendBtn = $('#aicSend');
 const aiStopBtn = $('#aicStop');
 let aiHistory = [];     // OpenAI 格式的多轮历史
@@ -789,8 +908,8 @@ function streamChat(messages, onDelta) {
 
 function appendMsg(role, text) {
   const div = document.createElement('div');
-  // 用户消息支持划句，但不参与卷面点词（单词卡只在 .can-lookup 内出现）
-  div.className = 'aic-msg aic-' + role + (role === 'user' ? ' can-select' : '');
+  // AI 对话不属于卷面，走后加载的预生成词形索引
+  div.className = 'aic-msg aic-' + role + ' can-select can-lookup-live';
   if (role === 'ai') div.innerHTML = renderMarkdown(text);
   else div.textContent = text;
   aiMessages.appendChild(div);
@@ -813,7 +932,7 @@ async function sendUserMessage(text, isPreset) {
   appendMsg('user', content);
   aiHistory.push({ role: 'user', content: content });
   const aiDiv = document.createElement('div');
-  aiDiv.className = 'aic-msg aic-ai can-select streaming'; // 生成内容支持划句，不参与卷面点词
+  aiDiv.className = 'aic-msg aic-ai can-select can-lookup-live streaming'; // AI 回答支持点词/划句，但不走卷面静态词典
   aiMessages.appendChild(aiDiv);
   followBottom();
   aiStreaming = true;
@@ -1100,8 +1219,8 @@ function currentSecLabel(range) {
 }
 
 /* ---------------- 鼠标交互绑定 ---------------- */
-/* 单词卡只属于卷面（.can-lookup）；.can-select 只放行划句，不触发点词 */
-const LOOKUP_ZONE = '.can-lookup';
+/* 卷面 .can-lookup 走静态词典；AI/收藏等 .can-lookup-live 走预生成索引 */
+const LOOKUP_ZONE = '.can-lookup, .can-lookup-live';
 function isInside(el, target) {
   return el && el.contains(target);
 }
@@ -1139,7 +1258,7 @@ document.addEventListener('mouseup', ev => {
     hideFavBar();
     hideTransPop();
     // 无选区 → 点击查词；优先用 mousedown 锁定的词（移动端点击后可能滚动）
-    const hit = (ev.target.closest('.can-lookup') ? downHit : null) || wordAtPoint(ev.clientX, ev.clientY);
+    const hit = (ev.target.closest(LOOKUP_ZONE) ? downHit : null) || wordAtPoint(ev.clientX, ev.clientY);
     if (hit && hit === downHit) {
       const dx = window.scrollX - downScroll.x;
       const dy = window.scrollY - downScroll.y;
@@ -1156,6 +1275,10 @@ document.addEventListener('mouseup', ev => {
       if (bubbleWord === key) {
         bubbleWord = null;
         bubble.style.display = 'none';
+        return;
+      }
+      if (hit.live) {
+        showLiveBubble(hit);
         return;
       }
       const lk = lookupWord(hit.raw, hit.sec, hit.blk);
@@ -1182,7 +1305,7 @@ document.addEventListener('mousedown', ev => {
       (isInside(aiChat, ev.target) &&
         (ev.target.closest('.aic-head') || ev.target.closest('.aic-input-row')))) return;
   // 正文类可查词区域：按下先锁定单词并收起旧浮层（mouseup 再决定同词关闭/异词切换）
-  if (ev.target.closest('.can-lookup')) {
+  if (ev.target.closest(LOOKUP_ZONE)) {
     downHit = wordAtPoint(ev.clientX, ev.clientY);
     downScroll = { x: window.scrollX, y: window.scrollY };
     bubble.style.display = 'none';

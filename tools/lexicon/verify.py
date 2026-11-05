@@ -142,7 +142,7 @@ with sync_playwright() as p:
         r = page.evaluate("([blk]) => { const x = lookupWord('left','newtype',blk); return x && x.lemma; }", [blk])
         check(f"2026 left {blk} -> {expected}", r == expected, r)
 
-    # paper word -> bubble; AI / favorites -> no bubble
+    # paper word -> static bubble; AI / favorites -> live precomputed bubble
     page.goto(URL + "#/2025/reading1")
     page.wait_for_timeout(700)
     ok = page.evaluate(LOCATE_JS, ["#sec-reading1 .passage", "tipped"])
@@ -154,6 +154,8 @@ with sync_playwright() as p:
     txt = page.eval_on_selector("#wordBubble", "el => el.innerText")
     check("卷面点词弹出卡片", "tip" in txt and "考研" not in txt, txt[:80].replace("\n", " | "))
 
+    page.evaluate("loadLiveDict()")
+    page.wait_for_function("window.__LIVE_DICT__ && Object.keys(window.__LIVE_DICT__.entries).length > 0", timeout=30000)
     page.evaluate("document.getElementById('aiChat').hidden=false; document.getElementById('aiFab').hidden=true; appendMsg('ai','This is a test sentence for clicking.');")
     page.wait_for_timeout(300)
     page.eval_on_selector("#aicMessages .aic-ai", "el => el.scrollIntoView({block:'center'})")
@@ -161,9 +163,13 @@ with sync_playwright() as p:
     pos = page.evaluate(COORD_JS, ["#aicMessages .aic-ai", "test"])
     if pos:
         page.mouse.click(pos["x"], pos["y"])
-        page.wait_for_timeout(300)
+    for _ in range(60):
+        page.wait_for_timeout(100)
+        if page.eval_on_selector("#wordBubble", "el => el.style.display") == "block":
+            break
     disp = page.eval_on_selector("#wordBubble", "el => el.style.display")
-    check("AI 窗点词不弹卡片", disp == "none", disp)
+    txt = page.eval_on_selector("#wordBubble", "el => el.innerText")
+    check("AI 窗点词弹出实时卡片", disp == "block" and "test" in txt.lower(), txt[:80].replace("\n", " | "))
 
     page.evaluate("state.favorites=[{type:'sent',text:'This is a favorite sentence.',label:'T',time:'12:00'}]; state.favTab='sent'; renderFavorites(); togglePanel(true);")
     page.wait_for_timeout(300)
@@ -172,9 +178,13 @@ with sync_playwright() as p:
     pos = page.evaluate(COORD_JS, ["#wpBody .s-text", "favorite"])
     if pos:
         page.mouse.click(pos["x"], pos["y"])
-        page.wait_for_timeout(300)
+    for _ in range(20):
+        page.wait_for_timeout(100)
+        if page.eval_on_selector("#wordBubble", "el => el.style.display") == "block":
+            break
     disp = page.eval_on_selector("#wordBubble", "el => el.style.display")
-    check("收藏句子点词不弹卡片", disp == "none", disp)
+    txt = page.eval_on_selector("#wordBubble", "el => el.innerText")
+    check("收藏句子点词弹出实时卡片", disp == "block" and "favorite" in txt.lower(), txt[:80].replace("\n", " | "))
 
     browser.close()
 
