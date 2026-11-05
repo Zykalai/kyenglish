@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """Assemble single-file HTML: template + lexicon + wordmap + papers + JS."""
 import json, os, re, glob, sys, io
+from pathlib import Path
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
-BASE = r"C:\Users\Lenovo\Doubao\chats\2026-10-26\new-chat-1\english2-exam"
+BASE = Path(__file__).resolve().parents[1]
 TPL = os.path.join(BASE, "英语二真题划词翻译.template.html")
 SRC = os.path.join(BASE, "src")
 PAPER_DIR = os.path.join(BASE, "data", "papers")

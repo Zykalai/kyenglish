@@ -4,6 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>考研英语二真题 · 划词精读</title>
+<meta name="description" content="考研英语二 2010–2026 共 17 套真题的划词精读工具：点词查词典、划句翻译、生词收藏、倒计时与黑夜模式，支持手机和桌面。">
+<meta name="theme-color" content="#2f2c26">
+<link rel="canonical" href="https://ab123666.github.io/kyenglish/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:site_name" content="考研英语二真题 · 划词精读">
+<meta property="og:title" content="考研英语二真题 · 划词精读">
+<meta property="og:description" content="考研英语二 2010–2026 共 17 套真题的划词精读工具：点词查词典、划句翻译、生词收藏、倒计时与黑夜模式。">
+<meta property="og:url" content="https://ab123666.github.io/kyenglish/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="考研英语二真题 · 划词精读">
+<meta name="twitter:description" content="考研英语二 2010–2026 共 17 套真题的划词精读工具：点词查词典、划句翻译、生词收藏、倒计时与黑夜模式。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%23a3402d'/%3E%3Ctext x='16' y='23' font-size='19' text-anchor='middle' fill='%23fbf8f0' font-family='Georgia,serif' font-weight='bold'%3E%E8%8B%B1%3C/text%3E%3C/svg%3E">
 <!-- 预热与火山方舟的连接：提前完成 DNS/TCP/TLS，降低发送到首字的等待（不影响模型输出） -->
 <link rel="preconnect" href="https://ark.cn-beijing.volces.com" crossorigin>
@@ -1648,7 +1660,7 @@ $('#paperView').addEventListener('click', ev => {
 
 /* ============================================================
  * 交互层：单词气泡、生词/句子收藏、黑夜模式、倒计时、工具条
- * 完全离线：无任何联网请求
+ * 词典与真题完全离线；AI 问答和划句翻译按需联网
  * ============================================================ */
 'use strict';
 
@@ -1659,10 +1671,34 @@ $('#paperView').addEventListener('click', ev => {
  * 申请入口：火山引擎方舟控制台 →「API Key 管理」+「在线推理」接入点
  * ============================================================ */
 /* API 走 Cloudflare Worker 代理：真实 Key 只存 Worker 服务端环境变量，
- * 前端零密钥，浏览器/抓包均拿不到 Key，可安全部署到 GitHub Pages 公开分享。 */
+ * 前端零密钥，浏览器/抓包均拿不到 Key，可安全部署到 GitHub Pages 公开分享。
+ * 如果 workers.dev 在当前网络不可达，可把 baseUrl 指到自己的 Worker 自定义域名：
+ *   window.DSH_AI_BASE_URL = 'https://your-worker.example.com';  // 页面加载前
+ *   localStorage.setItem('e2_aiBaseUrl', 'https://your-worker.example.com'); // 加载后刷新
+ */
+function getAiBaseOverride() {
+  try {
+    const raw = localStorage.getItem('e2_aiBaseUrl');
+    if (!raw) return '';
+    // 同时接受裸 URL 和 JSON 字符串（lsSet 写法）
+    try {
+      const parsed = JSON.parse(raw);
+      return typeof parsed === 'string' ? parsed : raw;
+    } catch (e) {
+      return raw;
+    }
+  } catch (e) {
+    return '';
+  }
+}
+const AI_BASE_URL = String(
+  (typeof window !== 'undefined' && window.DSH_AI_BASE_URL) ||
+  getAiBaseOverride() ||
+  'https://kyenglish.a965684016.workers.dev'
+).trim().replace(/\/+$/, '');
 const DOUBAO_CONFIG = {
   endpointId: 'ep-20261104014041-94z74', // DeepSeek 接入点
-  baseUrl: 'https://kyenglish.a965684016.workers.dev' // Cloudflare Worker 代理域名
+  baseUrl: AI_BASE_URL
 };
 
 /* ---------------- 单词气泡 ---------------- */
@@ -1785,7 +1821,7 @@ function bindFavBtn(lk) {
   };
 }
 
-/* ---------------- 划句翻译：Google 神经翻译 ---------------- */
+/* ---------------- 划句翻译：Google 优先，MyMemory 兜底 ---------------- */
 function fetchWithTimeout(url, ms) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), ms);
@@ -1806,9 +1842,62 @@ function googleTranslate(text) {
   });
 }
 
-/* 只走 Google 神经翻译；断网/失败不回退，由调用方提示检查网络 */
+/* MyMemory 免费翻译接口：Google 不可达时的兜底，CORS 开放。
+   单次查询限制约 500 字节，长句先按句切块，避免整段失败。 */
+function myMemoryTranslate(text) {
+  const url = 'https://api.mymemory.translated.net/get?q=' +
+    encodeURIComponent(text) + '&langpair=en|zh-CN';
+  return fetchWithTimeout(url, 12000).then(r => r.json()).then(d => {
+    const zh = d && d.responseData && d.responseData.translatedText;
+    if (!zh || /MYMEMORY|WARNING|INVALID|QUERY LENGTH/i.test(zh)) {
+      throw new Error('bad mymemory result');
+    }
+    return String(zh).trim();
+  });
+}
+
+function splitForTranslation(text, max) {
+  const parts = String(text).match(/[^.!?]+[.!?]?\s*/g) || [String(text)];
+  const chunks = [];
+  let cur = '';
+  const flush = () => {
+    const s = cur.trim();
+    if (s) chunks.push(s);
+    cur = '';
+  };
+  for (const raw of parts) {
+    if ((cur + raw).trim().length <= max) {
+      cur += raw;
+      continue;
+    }
+    flush();
+    let rest = raw.trim();
+    if (rest.length <= max) {
+      cur = rest;
+      continue;
+    }
+    while (rest.length > max) {
+      chunks.push(rest.slice(0, max));
+      rest = rest.slice(max);
+    }
+    cur = rest;
+  }
+  flush();
+  return chunks;
+}
+
+function myMemoryTranslateChunks(text) {
+  const chunks = splitForTranslation(text, 300);
+  if (!chunks.length) return Promise.reject(new Error('empty translation'));
+  return chunks.reduce((p, chunk) => p.then(async acc => {
+    const zh = await myMemoryTranslate(chunk);
+    return acc ? acc + zh : zh;
+  }), Promise.resolve(''));
+}
+
+/* Google 神经翻译优先；被墙/超时/空结果时回退 MyMemory */
 function translateSentence(text) {
-  return googleTranslate(text);
+  return googleTranslate(text).catch(() => myMemoryTranslateChunks(text));
 }
 
 function bindSpeakBtn(word) {

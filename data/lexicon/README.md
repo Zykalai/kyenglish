@@ -12,15 +12,38 @@
 | `wordmap.json` | 生成的查表：`global` + `sections` + `blocks`，运行时按 段落 → 板块 → 全局 查找 |
 | `work/` | 生成过程中的中间文件（`blocks.json`、审核报告），不参与网页构建 |
 
+## 环境
+
+已在 Python 3.13.15 上验证，依赖固定在仓库根目录的 `requirements.txt`：
+
+```powershell
+python -m pip install -r requirements.txt
+python -m playwright install chromium   # 仅在用 PLAYWRIGHT_CHANNEL=chromium 时需要
+```
+
+`verify.py` 默认使用 Edge；没有 Edge 的环境可以：
+
+```powershell
+$env:PLAYWRIGHT_CHANNEL = "chromium"
+python tools/lexicon/verify.py
+```
+
+`build.py` 需要 `data/dict/ecdict.csv`（66MB，未入库）。脚本会从 ECDICT 的固定 commit `9c46923` 下载并校验 SHA256：
+
+```powershell
+python tools/lexicon/download_ecdict.py
+```
+
 ## 构建
 
 ```powershell
-python tools/lexicon/build.py     # 生成 lexicon.json + wordmap.json
-python tools/assemble.py          # 合并成 index.html
-python tools/lexicon/verify.py    # Playwright 端到端检查
+python tools/lexicon/download_ecdict.py  # 首次：下载并校验 66MB ECDICT
+python tools/lexicon/build.py            # 生成 lexicon.json + wordmap.json
+python tools/assemble.py                 # 合并成 index.html
+python tools/lexicon/verify.py           # Playwright 端到端检查（唯一验收）
 ```
 
-`build.py` 需要本机的 `data/dict/ecdict.csv`（66MB，未入库）和系统 Python 的 `spacy` + `en_core_web_sm`、`lemminflect`。
+三个入口都用 `Path(__file__)` 推导项目根目录，不依赖本机绝对路径；换机器或 CI 只需安装依赖、准备 ECDICT。
 
 ## 词形流程
 
@@ -42,6 +65,26 @@ python tools/lexicon/verify.py    # Playwright 端到端检查
 
 单词卡只在卷面 `.can-lookup` 内出现；AI 对话、收藏、目录、首页使用 `.can-select`，只保留划句，不触发点词。
 
+## 测试
+
+`tools/lexicon/verify.py` 是唯一验收脚本，覆盖 17 套真题的逐词释义、词形覆盖、卷面点词、AI/收藏点词排除等 16 项检查。旧版 `tools/selftest.py` 与调试脚本已归档到 `_archive/tools-legacy-2026-11-05/`，不再参与构建。
+
+## 网络配置
+
+- **划句翻译**：Google 优先，失败时回退到 MyMemory；长句会按句切块。
+- **AI 窗口**：默认走 `https://kyenglish.a965684016.workers.dev`。如果当前网络访问 `workers.dev` 不稳定，可以在页面加载前设置自定义 Worker 地址：
+
+```js
+window.DSH_AI_BASE_URL = 'https://your-worker.example.com';
+```
+
+或加载后在控制台执行：
+
+```js
+localStorage.setItem('e2_aiBaseUrl', 'https://your-worker.example.com');
+location.reload();
+```
+
 ## 覆盖
 
-当前 17 套卷子共 64,194 个可点击词位、9,902 个 surface 键、约 6,000 个词条；`verify.py` 会逐词检查「卷面每个单词都有词典释义」。
+当前 17 套卷子共 64,194 个可点击词位、9,902 个 surface 键、6,055 个词条；`verify.py` 会逐词检查「卷面每个单词都有词典释义」。

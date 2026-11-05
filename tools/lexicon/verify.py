@@ -5,15 +5,17 @@ Run after tools/lexicon/build.py + tools/assemble.py:
     python tools/lexicon/verify.py
 """
 import os
+from pathlib import Path
 import sys
 import io
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 from playwright.sync_api import sync_playwright
 
-BASE = r"C:\Users\Lenovo\Doubao\chats\2026-10-26\new-chat-1\english2-exam"
+BASE = Path(__file__).resolve().parents[2]
 URL = "file:///" + os.path.join(BASE, "index.html").replace("\\", "/")
 WORD_RE = r"[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-z0-9À-ÖØ-öø-ÿ'’&.\-]*"
+CHANNEL = os.environ.get("PLAYWRIGHT_CHANNEL", "msedge").strip()
 results = []
 
 
@@ -88,7 +90,10 @@ COORD_JS = """
 """
 
 with sync_playwright() as p:
-    browser = p.chromium.launch(channel="msedge", headless=True)
+    launch_kwargs = {"headless": True}
+    if CHANNEL and CHANNEL.lower() != "chromium":
+        launch_kwargs["channel"] = CHANNEL
+    browser = p.chromium.launch(**launch_kwargs)
     page = browser.new_page(viewport={"width": 1440, "height": 900})
     errors = []
     page.on("pageerror", lambda e: errors.append(str(e)))

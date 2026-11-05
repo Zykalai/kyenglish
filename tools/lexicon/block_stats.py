@@ -2,6 +2,7 @@
 """Block-level ambiguity stats: paragraph/question-sized blocks."""
 import json
 import os
+from pathlib import Path
 import sys
 import io
 from collections import Counter, defaultdict
@@ -9,7 +10,7 @@ from collections import Counter, defaultdict
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 import spacy
 
-BASE = r"C:\Users\Lenovo\Doubao\chats\2026-10-26\new-chat-1\english2-exam"
+BASE = Path(__file__).resolve().parents[2]
 PAPERS = os.path.join(BASE, "data", "papers")
 
 

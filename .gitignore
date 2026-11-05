@@ -1,6 +1,7 @@
 # 公开分享仓库：保留可复现的源码与单文件成品；原始大词典、备份、截图不入库
 /*
 !/index.html
+!/requirements.txt
 !/src/
 !/tools/
 !/data/
