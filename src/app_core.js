@@ -306,7 +306,6 @@ function clearTransient() {
     if (typeof currentSel !== 'undefined') currentSel = null;
     const b = $('#wordBubble'); if (b) b.style.display = 'none';
     const fb = $('#favBar'); if (fb) fb.style.display = 'none';
-    const tp = $('#transPop'); if (tp) tp.style.display = 'none';
     const sel = window.getSelection();
     if (sel && sel.rangeCount) sel.removeAllRanges();
   } catch (e) {}

@@ -1,6 +1,6 @@
 /* ============================================================
  * 交互层：单词气泡、生词/句子收藏、黑夜模式、倒计时、工具条
- * 词典与真题完全离线；AI 问答和划句翻译按需联网
+ * 词典与真题完全离线；AI 问答按需联网
  * ============================================================ */
 'use strict';
 
@@ -162,32 +162,6 @@ function bindFavBtn(lk) {
       b.classList.toggle('faved', faved);
     }
   };
-}
-
-/* ---------------- 划句翻译：Google 优先，MyMemory 兜底 ---------------- */
-function fetchWithTimeout(url, ms) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), ms);
-  return fetch(url, { signal: ctrl.signal })
-    .then(r => { clearTimeout(timer); return r; })
-    .catch(e => { clearTimeout(timer); throw e; });
-}
-
-/* Google 官方 gtx 免费端点：走 GNMT 神经翻译，免费无 key 方案里译文最自然，CORS 开放 */
-function googleTranslate(text) {
-  const url = 'https://translate.googleapis.com/translate_a/single?client=gtx' +
-    '&sl=en&tl=zh-CN&dt=t&q=' + encodeURIComponent(text);
-  return fetchWithTimeout(url, 8000).then(r => r.json()).then(data => {
-    if (!Array.isArray(data) || !Array.isArray(data[0])) throw new Error('bad google data');
-    const zh = data[0].map(seg => seg && seg[0]).filter(Boolean).join('');
-    if (!zh) throw new Error('empty google result');
-    return zh.trim();
-  });
-}
-
-/* 只走 Google 神经翻译；失败时由调用方提示网络不通畅，不做其他回退 */
-function translateSentence(text) {
-  return googleTranslate(text);
 }
 
 function bindSpeakBtn(word) {
@@ -416,7 +390,6 @@ function showFavBar(sel, pt) {
   const alreadyFav = state.favorites.some(f => f.type === 'sent' && f.text === norm);
   favBar.innerHTML = `
     <button class="icon-btn" id="selSpeakBtn" title="朗读句子">${SPEAKER_ICON}</button>
-    <button class="primary" id="selTransBtn">翻译</button>
     <button id="selAiBtn">讲解</button>
     <button id="selAiCustomBtn">追问</button>
     <button id="selFavBtn" class="${alreadyFav ? 'faved' : ''}">${alreadyFav ? '取消收藏' : '收藏本句'}</button>
@@ -485,17 +458,11 @@ function showFavBar(sel, pt) {
     window.getSelection().removeAllRanges();
     currentSel = null;
     hideFavBar();
-    hideTransPop();
   };
   $('#selSpeakBtn').onclick = ev => {
     ev.preventDefault();
     ev.stopPropagation();
     speakText(sel.text); // 朗读选中的整句/整段
-  };
-  $('#selTransBtn').onclick = ev => {
-    ev.preventDefault();
-    ev.stopPropagation();
-    runTranslate(); // 翻译当前划选内容，浮层显示在选区下方
   };
   $('#selAiBtn').onclick = ev => {
     ev.preventDefault();
@@ -522,103 +489,6 @@ function showFavBar(sel, pt) {
 }
 function hideFavBar() { favBar.style.display = 'none'; }
 
-/* ---------------- 划句翻译浮层 ---------------- */
-const transPop = $('#transPop');
-const transBody = $('#transBody');
-function hideTransPop() { transPop.style.display = 'none'; }
-// 翻译框整体拦截鼠标事件，杜绝穿透到后面的单词
-['mousedown', 'mouseup', 'click'].forEach(type =>
-  transPop.addEventListener(type, ev => ev.stopPropagation()));
-
-/* 定位：以选区包围盒为基准，正下方优先（不遮挡划选内容），并主动避让选区工具条。
-   下方放不下时往右侧靠，再不行往左侧，框宽按可用空间动态收缩，避免遮挡或溢出。 */
-function positionTransPop() {
-  const rect = currentSel ? currentSel.rect : null;
-  const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
-  const sx = window.scrollX, sy = window.scrollY;
-  const gap = 10, MIN_W = 240, MAX_W = 520;
-  const clamp = (v, min, max) => Math.max(min, Math.min(v, max));
-  // 选区工具条（长方框）当前视口包围盒，作为避让障碍；隐藏则忽略
-  const barShown = favBar.style.display !== 'none' && favBar.offsetParent !== null;
-  const bar = barShown ? favBar.getBoundingClientRect() : null;
-  // 候选框（视口坐标）是否与工具条重叠
-  const hitBar = (l, t, w, h) => bar &&
-    !(l + w <= bar.left + gap || l >= bar.right - gap ||
-      t + h <= bar.top + gap || t >= bar.bottom - gap);
-  let lv, tv;
-  if (!rect) {
-    transPop.style.width = '320px';
-    lv = 10; tv = 10;
-  } else {
-    const idealW = clamp(Math.round(rect.width), MIN_W, MAX_W);
-    transPop.style.width = idealW + 'px';
-    let h = transPop.offsetHeight;
-    const candL = clamp(rect.left, 10, vw - idealW - 10);
-    // 正下方基准：默认选区底+gap；工具条若压在下方且水平重叠，则从工具条底部再往下
-    let belowTop = rect.bottom + gap;
-    if (bar && bar.bottom > rect.bottom &&
-        bar.right > candL && bar.left < candL + idealW) {
-      belowTop = Math.max(belowTop, bar.bottom + gap);
-    }
-    if (belowTop + h <= vh - 10 && !hitBar(candL, belowTop, idealW, h)) {
-      // 1) 选区正下方（已避让工具条，往下挪）
-      tv = belowTop; lv = candL;
-    } else {
-      // 下方放不下：优先右侧，宽度按右侧可用空间收缩（最小 MIN_W）
-      const rightAvail = vw - rect.right - gap - 10;
-      const leftAvail = rect.left - gap - 10;
-      if (rightAvail >= MIN_W) {
-        const w = Math.min(idealW, Math.floor(rightAvail));
-        transPop.style.width = w + 'px';
-        h = transPop.offsetHeight;
-        lv = rect.right + gap;
-        tv = clamp(rect.top, 10, vh - h - 10);
-        // 右侧若仍与工具条重叠，让到工具条下方（放得下时），否则让到工具条上方
-        if (hitBar(lv, tv, w, h)) {
-          if (bar.bottom + gap + h <= vh - 10) tv = bar.bottom + gap;
-          else if (bar.top - gap - h >= 10) tv = bar.top - gap - h;
-        }
-      } else if (leftAvail >= MIN_W) {
-        // 2) 右侧不够：放左侧
-        const w = Math.min(idealW, Math.floor(leftAvail));
-        transPop.style.width = w + 'px';
-        h = transPop.offsetHeight;
-        lv = rect.left - gap - w;
-        tv = clamp(rect.top, 10, vh - h - 10);
-        if (hitBar(lv, tv, w, h)) {
-          if (bar.bottom + gap + h <= vh - 10) tv = bar.bottom + gap;
-          else if (bar.top - gap - h >= 10) tv = bar.top - gap - h;
-        }
-      } else {
-        // 3) 物理上四面都满（选区几乎占满整屏）：收缩到最小宽贴右侧，保证可见、可关
-        transPop.style.width = MIN_W + 'px';
-        h = transPop.offsetHeight;
-        lv = vw - MIN_W - 10;
-        tv = clamp(rect.top, 10, vh - h - 10);
-      }
-    }
-  }
-  transPop.style.left = (lv + sx) + 'px';
-  transPop.style.top = (tv + sy) + 'px';
-}
-
-function runTranslate() {
-  if (!currentSel) return;
-  const captured = currentSel;
-  transPop.style.display = 'block';
-  transBody.innerHTML = '<span class="tp-loading">翻译中…</span>';
-  positionTransPop();
-  translateSentence(captured.text).then(zh => {
-    if (currentSel !== captured) return; // 期间已换选区，丢弃过期结果
-    transBody.textContent = zh;
-    positionTransPop(); // 译文回来后高度变化，重新定位
-  }).catch(() => {
-    if (currentSel !== captured) return;
-    transBody.innerHTML = '<span class="tp-error">网络不通畅，Google 翻译暂时连不上，请检查网络后重试</span>';
-    positionTransPop();
-  });
-}
-$('#transClose').onclick = () => hideTransPop();
 
 /* ============================================================
  * 豆包 AI 迷你聊天：流式调用火山方舟，多轮上下文，安全渲染
@@ -1038,7 +908,6 @@ $('#aicFontInc').onclick = () => setAiFontSize(aiFontSize + 1);
    开场只发一句简短请求，后续由用户自己追问。 */
 function askAi(kind, content) {
   openAiPanel();
-  hideTransPop(); // 跳转 AI 窗即关闭翻译框，任何入口都生效
   // 只发简短请求，不附原文；上下文由用户自己追问
   const prompt = '请为我讲解“' + content + '”';
   // 讲解为预设自动发送，与输入框无关：无条件清空，避免残留追问/未发送的草稿
@@ -1051,7 +920,6 @@ function askAi(kind, content) {
    光标定位到末尾，用户自己补充想问的内容后手动发送 */
 function askAiCustom(kind, content) {
   openAiPanel();
-  hideTransPop(); // 跳转 AI 窗即关闭翻译框，任何入口都生效
   // 不区分单词/句子，统一"关于…"；引号仅界定引用内容
   const ref = '关于“' + content + '”，';
   aiInput.value = ref;
@@ -1152,7 +1020,6 @@ document.addEventListener('mouseup', ev => {
   if (isInside($('#wordPanel'), ev.target) && !ev.target.closest('.s-text')) return;
   // 点击/划选发生在气泡、收藏条、弹层、工具条、侧栏内则不响应
   if (isInside(bubble, ev.target) || isInside(favBar, ev.target) ||
-      isInside(transPop, ev.target) ||
       isInside(aiFab, ev.target) ||
       // AI 窗内仅头部/输入区拦截；消息区放行划句（点词由 .can-lookup 门控）
       (isInside(aiChat, ev.target) &&
@@ -1165,20 +1032,18 @@ document.addEventListener('mouseup', ev => {
     // 导航跳转导致的点击穿透：跳过本次查词
     if (suppressNextLookup) { suppressNextLookup = false; hideFavBar(); return; }
     // 软键盘发送后的合成点击穿透：屏蔽窗口内不查词、不弹收藏条
-    if (Date.now() < blockLookupUntil) { hideFavBar(); hideTransPop(); return; }
+    if (Date.now() < blockLookupUntil) { hideFavBar(); return; }
     const sel = getEnglishSelection();
     if (sel) {
-      // 拖拽划选：弹收藏条（不做单词查词），并收起旧翻译框
+      // 拖拽划选：弹收藏条（不做单词查词），并收起旧气泡
       downHit = null;
       currentSel = sel;
       bubbleWord = null;
       bubble.style.display = 'none';
-      hideTransPop();
       showFavBar(sel, { x: ev.clientX, y: ev.clientY });
       return;
     }
     hideFavBar();
-    hideTransPop();
     // 无选区 → 点击查词；优先用 mousedown 锁定的词（移动端点击后可能滚动）
     const hit = (ev.target.closest('.can-lookup') ? downHit : null) || wordAtPoint(ev.clientX, ev.clientY);
     if (hit && hit === downHit) {
@@ -1218,7 +1083,6 @@ document.addEventListener('mousedown', ev => {
   // 直接拦截默认行为，避免快速点词时选中文字
   if (ev.target.closest(LOOKUP_ZONE) && ev.detail > 1) ev.preventDefault();
   if (isInside(bubble, ev.target) || isInside(favBar, ev.target) ||
-      isInside(transPop, ev.target) ||
       isInside(aiFab, ev.target) ||
       (isInside(aiChat, ev.target) &&
         (ev.target.closest('.aic-head') || ev.target.closest('.aic-input-row')))) return;
@@ -1228,7 +1092,6 @@ document.addEventListener('mousedown', ev => {
     downScroll = { x: window.scrollX, y: window.scrollY };
     bubble.style.display = 'none';
     hideFavBar();
-    hideTransPop();
     return;
   }
 });

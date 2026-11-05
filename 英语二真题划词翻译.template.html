@@ -4,18 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>考研英语二真题 · 划词精读</title>
-<meta name="description" content="考研英语二 2010–2026 共 17 套真题的划词精读工具：点词查词典、划句翻译、生词收藏、倒计时与黑夜模式，支持手机和桌面。">
+<meta name="description" content="考研英语二 2010–2026 共 17 套真题的划词精读工具：点词查词典、生词收藏、倒计时与黑夜模式，支持手机和桌面。">
 <meta name="theme-color" content="#2f2c26">
 <link rel="canonical" href="https://ab123666.github.io/kyenglish/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:site_name" content="考研英语二真题 · 划词精读">
 <meta property="og:title" content="考研英语二真题 · 划词精读">
-<meta property="og:description" content="考研英语二 2010–2026 共 17 套真题的划词精读工具：点词查词典、划句翻译、生词收藏、倒计时与黑夜模式。">
+<meta property="og:description" content="考研英语二 2010–2026 共 17 套真题的划词精读工具：点词查词典、生词收藏、倒计时与黑夜模式。">
 <meta property="og:url" content="https://ab123666.github.io/kyenglish/">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="考研英语二真题 · 划词精读">
-<meta name="twitter:description" content="考研英语二 2010–2026 共 17 套真题的划词精读工具：点词查词典、划句翻译、生词收藏、倒计时与黑夜模式。">
+<meta name="twitter:description" content="考研英语二 2010–2026 共 17 套真题的划词精读工具：点词查词典、生词收藏、倒计时与黑夜模式。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%23a3402d'/%3E%3Ctext x='16' y='23' font-size='19' text-anchor='middle' fill='%23fbf8f0' font-family='Georgia,serif' font-weight='bold'%3E%E8%8B%B1%3C/text%3E%3C/svg%3E">
 <!-- 预热与火山方舟的连接：提前完成 DNS/TCP/TLS，降低发送到首字的等待（不影响模型输出） -->
 <link rel="preconnect" href="https://ark.cn-beijing.volces.com" crossorigin>
@@ -435,20 +435,6 @@ body.dark #swBtn.running,body.dark #timerBtn.running{color:#152922;}
 #favBar button.primary{background:var(--accent);font-weight:700;}
 #favBar button:hover{background:var(--topbar-btn-hover);}
 #favBar .sel-hint{font-size:11px;color:#b9b09c;padding:0 10px;border-left:1px solid #4a4438;}
-/* ---- 划句翻译浮层：只显示中文，米白卡片，远距也清晰 ---- */
-#transPop{position:absolute;z-index:91;display:none;min-width:260px;max-width:520px;
-  background:var(--paper);border:1px solid var(--rule);border-radius:9px;
-  box-shadow:0 12px 32px rgba(0,0,0,.22);overflow:hidden;}
-#transPop .tp-pop-head{display:flex;align-items:center;justify-content:space-between;
-  padding:8px 14px;font-size:12px;letter-spacing:.5px;color:var(--pine);
-  border-bottom:1px solid var(--rule);background:var(--pine-soft);}
-#transPop .tp-pop-head button{border:0;background:transparent;font-size:17px;line-height:1;
-  cursor:pointer;color:var(--pine);padding:2px 6px;}
-#transPop .tp-pop-head button:hover{color:var(--ink);}
-#transPop .tp-pop-body{padding:13px 16px;font-size:15px;line-height:1.75;color:var(--ink);}
-#transPop .tp-loading{color:var(--pine);font-size:13px;}
-#transPop .tp-error{color:#b04a3a;font-size:13px;}
-
 /* ============================================================
    豆包 AI 迷你聊天窗（本地自用，右下角；多轮/流式/收起）
    ============================================================ */
@@ -729,11 +715,6 @@ body.aic-dragging-move,body.aic-dragging-move *{cursor:move !important;}
 
 <div id="wordBubble"></div>
 <div id="favBar"></div>
-<div id="transPop">
-  <div class="tp-pop-head"><span id="transSrc">译文</span><button id="transClose" aria-label="关闭">×</button></div>
-  <div class="tp-pop-body" id="transBody"></div>
-</div>
-
 <!-- 豆包 AI 迷你聊天窗（本地自用版，右下角，支持多轮/流式/收起） -->
 <div id="aiChat" hidden>
   <div class="aic-head">
