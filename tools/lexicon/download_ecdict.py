@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Download the pinned ECDICT csv used to build the paper lexicon.
+"""Download the pinned ECDICT csv used to build the direct dictionary.
 
 The 66MB file is intentionally not committed. This script fetches the exact
 upstream revision and verifies its SHA256 before replacing data/dict/ecdict.csv.
