@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["mx"]={"mx":["abbr. 麦克斯韦（maxwell, 磁通量单位）；中性（Middlesex）","'em'eks"],"mxd":["abbr. mixed 混合的",""]};

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Assemble single-file HTML: template + lexicon + wordmap + papers + JS."""
+"""Assemble single-file HTML: template + papers + JS."""
 import json, os, re, glob, sys, io
 from pathlib import Path
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
@@ -8,8 +8,6 @@ BASE = Path(__file__).resolve().parents[1]
 TPL = os.path.join(BASE, "英语二真题划词翻译.template.html")
 SRC = os.path.join(BASE, "src")
 PAPER_DIR = os.path.join(BASE, "data", "papers")
-LEXICON = os.path.join(BASE, "data", "lexicon", "lexicon.json")
-WORDMAP = os.path.join(BASE, "data", "lexicon", "wordmap.json")
 OUT = os.path.join(BASE, "index.html")
 
 def validate(p):
@@ -40,10 +38,6 @@ for f in sorted(glob.glob(os.path.join(PAPER_DIR, "*.json"))):
     papers.append(p)
 
 papers.sort(key=lambda x: x["year"])
-with open(LEXICON, encoding="utf-8") as f:
-    lexicon_blob = f.read()
-with open(WORDMAP, encoding="utf-8") as f:
-    wordmap_blob = f.read()
 exam_blob = json.dumps({"papers": papers}, ensure_ascii=False, separators=(",", ":"))
 
 with open(TPL, encoding="utf-8") as f:
@@ -57,9 +51,7 @@ with open(os.path.join(SRC, "alarm_bell.js"), encoding="utf-8") as f:
     bell = f.read()
 
 # inject data into core anchor
-data_js = ("const LEXICON_DATA = " + lexicon_blob + ";\n" +
-           "const WORDMAP_DATA = " + wordmap_blob + ";\n" +
-           "const EXAM_DATA = " + exam_blob + ";\n")
+data_js = "const EXAM_DATA = " + exam_blob + ";\n"
 core = core.replace("/* __DATA_ANCHOR__ */", data_js)
 
 script = "<script>\n" + bell + "\n" + core + "\n" + interact + "\n</script>"

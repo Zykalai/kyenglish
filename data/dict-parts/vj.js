@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["vj"]={"vj":["abbr. 电视综艺节目主持人（Video Jockey）",""]};

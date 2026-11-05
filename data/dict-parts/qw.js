@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["qw"]={"qw":["abbr. 量子阱（quantum well）",""],"qweef":["阴道排气；阴道放屁（粗俗俚语）",""],"qwert":["玩转万王；全键盘",""],"qwerty":["a. 与英文打字机键盘一样的","'kwә:ti"],"qwerty keyboard":["qwerty键盘\\n柯蒂键盘",""],"qwest":["abbr. quantum-well envelope state transition 量子阱包络态跃迁",""],"qwk":["[计] 一种快信格式",""]};

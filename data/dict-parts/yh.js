@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["yh"]={"yh":["abbr. 青年招待所（\tyouth hostel）；电焊机电缆；改性氯丁胶",""],"yha":["abbr. 青年招待所协会（Youth Hostels Association）",",wai eitʃ 'ei"],"yhe":["abbr. Hope;  British Columbia;  Canada 加拿大; 不列颠哥伦比亚省",""],"yhvh":["[网络] 耶和华；神；之名",""],"yhwh":["n. (=YHVH) 耶和华","'jɑ:wei,-vei"]};

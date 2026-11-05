@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["nx"]={"nx":["abbr. 非消耗品（Nonexpendable Item）；澳门航空公司",""],"nxt":["abbr. next 接下去的; 其次的; 下一个的; 下一次的",""]};

@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["vk"]={"vk":["abbr. 维生素k（vitamin k）",""]};

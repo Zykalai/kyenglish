@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["wz"]={"wz":["n. 五庄观（游戏名）",""],"wzo":["abbr. World Zionist Organization 世界犹太复国主义者组织",""]};

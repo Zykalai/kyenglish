@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["tq"]={"tq":["abbr. 洽谈通（网上沟通软件）；关断时间；全人智商（Triune Intelligence）",""],"tqc":["[化] 全面质量管理",""],"tqe":["abbr. technical quality evaluation 技术质量评价","t'kə"],"tqm":["abbr. 全面质量管理total quality management",""]};

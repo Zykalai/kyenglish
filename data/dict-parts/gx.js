@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["gx"]={"gx":["abbr. 邻二甲苯",""],"gxt":["abbr. graded exercise test 等级运动试验; 分级训练测验; graded exercise testing 等级运动试验",""]};

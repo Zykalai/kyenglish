@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["bq"]={"bq":["abbr. [医]对苯醌（p-benzoquinone）",""]};

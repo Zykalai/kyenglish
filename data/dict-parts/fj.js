@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["fj"]={"fj":["n. 斐济",""],"fjall":["[瑞]冰蚀高原","fjæl"],"fjard":["低浅峡湾, 伙崖谷, (北欧诸国的)荒瘠高原[石质高原]","fjɑ:d"],"fjeld":["n. (北欧等的)冰蚀高原","fjeld"],"fjeldbotn":["[挪]冰蚀冰斗","'fjeldbәtn"],"fjelde":["[地名] [丹麦] 菲耶勒",""],"fjell":["冰蚀沼地","fjel"],"fjord":["n. 峡湾","fjɔ:d"],"fjords":["n. 峡湾, 海岸峡江( fjord的复数形式 )","fjɔ:dz"]};

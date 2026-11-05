@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["hz"]={"hz":["[计] 赫兹",""],"hzv":["[医][=herpes zoster virus]带状疱疹病毒","'etʃz'i:v'i:"]};

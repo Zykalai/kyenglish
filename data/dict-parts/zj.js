@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["zj"]={"zj":["abbr. zipper(ed) jacket 拉链夹克; zonder jaartel (Dutch=without date of publication) （丹麦语）没有出版日","'zi:dʒ'eɪ"]};

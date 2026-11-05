@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["gq"]={"gq":["abbr. 全船战备部署（general quarters）",""]};

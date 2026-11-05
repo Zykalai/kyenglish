@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["wq"]={"wq":["abbr. 一系列污水污物潜水泵型号；志商（Will Intelligence Quotient）；无功电量",""]};

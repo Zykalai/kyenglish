@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["cj"]={"cj":["审判长, 法院院长, 首席法官",""],"cj-1824":["[医] 伊凡斯兰廓清率",""],"cjd":["abbr. 克罗伊茨费尔特—雅各布病（Creutzfeldt-Jakob disease）；中国期刊全文数据库",",si: dʒei 'di:"],"cjtf":["abbr. Commander, Joint Task Force 联合特混部队司令（美军）",""]};

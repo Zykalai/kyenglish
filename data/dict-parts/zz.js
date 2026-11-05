@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["zz"]={"zz":["n. Z字形, 锯齿形（等于zigzag）",""],"zz top":["美国摇滚乐队ZZ Top",""],"zz.":["[医] 姜",""],"zzz":["int. 打鼾声",""]};

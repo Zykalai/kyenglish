@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["uq"]={"uq":["abbr. 昆士兰大学（The University of Queensland）；上四分值（upper quartile）",""]};

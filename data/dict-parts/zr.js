@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["zr"]={"zr":["[医] 锆(40号元素)",""],"zranklinization":["[医] 静电疗法",""],"zrm":["n. 自然码",""]};

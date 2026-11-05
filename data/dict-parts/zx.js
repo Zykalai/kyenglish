@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["zx"]={"zxcvbnm":["烦躁时随手敲出的键盘字母串",""],"zxcvbnmasdfghjklqwertyuiop":["无聊时把键盘上的字母乱敲一遍",""]};

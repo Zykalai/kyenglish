@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["qj"]={"qj":["abbr. Jet Airways 喷气机航空公司（代码）; queue jockey 候话音乐播放师",""]};

@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["vz"]={"vz":["abbr. virtual zero 虚零",""],"vzv":["abbr. 水痘带状疱疹病毒（varicella zoster virus）",""]};

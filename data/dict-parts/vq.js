@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["vq"]={"vqr":["abbr. vendor qualification report 供应商质量认证报告",""]};

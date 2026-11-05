@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["jz"]={"jz":["abbr. 南斯拉夫国家铁路（塞尔维亚-克罗地亚语缩写, Jugoslav State Railways）",""],"jzjuno-":["[医] 空肠",""]};

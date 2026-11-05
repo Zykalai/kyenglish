@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["xz"]={"xz":["abbr. 行政类；旋转字注解（排版用词）；缅甸（航空器国籍标志）",""],"xzibit":["[人名]艾勒比",""]};

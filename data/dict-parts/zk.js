@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["zk"]={"zk":["[医][=z line]z线（即间板）","'zi:k'eɪ"]};

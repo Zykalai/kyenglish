@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["fk"]={"fk":["abbr. 外键（foreign key）",""]};

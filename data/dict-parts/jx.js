@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["jx"]={"jx":["abbr. juxtaglomerular radius 肾小球旁的半径",""]};

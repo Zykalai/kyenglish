@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["dq"]={"dq":["abbr. 冰激凌品牌（Dairy Queen）；定量（definite quantity）；[律]直接讯问（direct question）",""],"dqdb":["[计] 分布式对列双总线",""]};

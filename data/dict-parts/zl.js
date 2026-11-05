@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["zl"]={"zl":["abbr. 零位线, 基准线（zero line）",""],"zlatar":["[地名] [保加利亚、克罗地亚] 兹拉塔尔",""],"zlatoust":["兹拉托乌斯特[苏联乌拉尔城市]",",zlɑ:tә'u:st"],"zloties":["(zloty 的复数) n. 兹罗提(波兰货币单位)",""],"zlotnick":["[人名] 兹洛特尼克",""],"zloty":["n. 兹罗提(波兰货币单位)","'zlɒti"],"zlotys":["(zloty 的复数) n. 兹罗提(波兰货币单位)",""]};

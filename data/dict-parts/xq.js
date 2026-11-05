@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["xq"]={"xq":["abbr. 交叉问题, 相互提问（Cross-Question）",""]};

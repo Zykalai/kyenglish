@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["xw"]={"xw":["abbr. 无认股证书（ex warrants）",""],"xwindows":["[计] XWindows软件系统",""]};

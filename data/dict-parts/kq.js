@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["kq"]={"kq":["abbr. Kenya Airways 肯尼亚航空公司（基什航空公司）（代码）",""]};

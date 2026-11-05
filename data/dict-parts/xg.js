@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["xg"]={"xg":["abbr. crossing 横越，交叉口（代号）",""],"xga":["扩展视频图形适配器",""]};

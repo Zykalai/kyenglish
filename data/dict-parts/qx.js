@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["qx"]={"qx":["abbr. quasi-crystalline 准结晶的，准晶体的; quintaux (French=hundred-weights) （法语）百个计量单位",""]};

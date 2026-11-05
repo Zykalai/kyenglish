@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["mz"]={"mz":["abbr. 平均粒度（Mean Grain Size）；地中海区域（Mediterranean Zone）；中带（Middle Zone）；莫桑比克（Mozambique）",""],"mza":["abbr. monozygotic twins reared apart 单卵双胎分开抚养",""],"mzee":["<东非英语>n.老人","әmzei"],"mzungu":["n. <东非英语>白人","әm'zjŋ^u:"]};

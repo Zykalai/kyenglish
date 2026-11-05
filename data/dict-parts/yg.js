@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["yg"]={"yg":["abbr. 黄绿色的（yellowish green）",""],"ygdrasil":["n. (北欧神话中的)乾坤树","'i^drәsil"],"ygerne":["n. =Igraine [变体]","i:'geәn"],"yggdrasil":["n. [神话中的] 宇宙树",""],"yggdrasill":["n. [神话中的] 宇宙树",""],"yglesias":["[人名] 伊格莱西亚斯",""],"ygomelus":["臀肢畸胎",""]};

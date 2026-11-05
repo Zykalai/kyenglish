@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["rx"]={"rx":["n. 处方；治疗方案","'ɑ:r'eks"],"rxr":["[医]维甲酸X受体",""],"rxs":["abbr. radar cross-section 雷达覆盖区，雷达散射截面（积），雷达有效反射面积","ˈɑ:rˈeksiz"]};

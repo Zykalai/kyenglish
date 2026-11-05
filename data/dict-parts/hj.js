@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["hj"]={"hj":["abbr. （拉）hic jacet",""],"hjelle":["[地名] [挪威] 耶勒",""],"hjelmite":["钙钽钇矿(原译名钙铌钽矿)","'jel,mait"],"hjelmslevian":["a. (20世纪丹麦语言学家) 叶尔姆斯莱夫","hjelmz'leviәn"],"hjort":["[人名] 约尔特",""]};

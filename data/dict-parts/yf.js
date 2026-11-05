@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["yf"]={"yf":["abbr. 黄热病（Yellow Fever）",""],"yfs":["(yf 的第三人称 -s形式) abbr. 黄热病（Yellow Fever）",""],"yft":["abbr. torpedo transportation lighter 鱼雷运输驳（美国海军舰船符号）",""]};

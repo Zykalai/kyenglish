@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["yq"]={"yquem":["n. 依奎姆(依坤)葡萄酒","i:'kem"]};

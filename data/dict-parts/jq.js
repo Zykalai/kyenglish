@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["jq"]={"jq":["abbr. 判断力商数（Judgment Quotient）",""]};

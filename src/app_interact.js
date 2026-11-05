@@ -47,35 +47,39 @@ const TRANSLATE_BASE_URL = (
   'https://kyenglish-ai-proxy.pages.dev'
 ).replace(/\/+$/, '');
 
-/* 卷面外单词：按首字母懒加载预生成词形索引 + ECDICT 高频释义。
+/* 直接词典：按单词前两个字母懒加载 ECDICT 原词条。
+   不预生成词形，不做 spaCy 还原；词形注释在卡片里再查原形。
    用 <script> 而不是 fetch：本地 file:// 打开也能加载，GitHub Pages 也能缓存。 */
-const LIVE_DICT_DIR = 'data/live-dict/';
-const liveDictParts = {};
-const liveDictPromises = {};
-function livePartKey(raw) {
-  const first = normalizeLiveWord(raw).slice(0, 1);
-  return /^[a-z]$/.test(first) ? first : '_';
+const DICT_DIR = 'data/dict-parts/';
+const dictParts = {};
+const dictPromises = {};
+function dictPartKey(raw) {
+  const word = normalizeDictWord(raw);
+  const two = word.slice(0, 2);
+  if (/^[a-z]{2}$/.test(two)) return two;
+  const one = word.slice(0, 1);
+  return /^[a-z]$/.test(one) ? one : '_';
 }
-function loadLiveDict(part) {
-  if (liveDictParts[part]) return Promise.resolve(liveDictParts[part]);
-  if (!liveDictPromises[part]) {
-    liveDictPromises[part] = new Promise((resolve, reject) => {
+function loadDictPart(part) {
+  if (dictParts[part]) return Promise.resolve(dictParts[part]);
+  if (!dictPromises[part]) {
+    dictPromises[part] = new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = LIVE_DICT_DIR + part + '.js';
+      script.src = DICT_DIR + part + '.js';
       script.onload = () => {
-        const data = window.__LIVE_DICT_PARTS__ && window.__LIVE_DICT_PARTS__[part];
+        const data = window.__DICT_PARTS__ && window.__DICT_PARTS__[part];
         if (data) {
-          liveDictParts[part] = data;
+          dictParts[part] = data;
           resolve(data);
         } else {
-          reject(new Error('live dictionary part missing'));
+          reject(new Error('dictionary part missing'));
         }
       };
-      script.onerror = () => reject(new Error('live dictionary load failed'));
+      script.onerror = () => reject(new Error('dictionary load failed'));
       document.head.appendChild(script);
-    }).catch(err => { liveDictPromises[part] = null; throw err; });
+    }).catch(err => { dictPromises[part] = null; throw err; });
   }
-  return liveDictPromises[part];
+  return dictPromises[part];
 }
 
 /* 调用层人设：只拼进每次 API 请求的 messages，不写入 aiHistory，也不在页面上显示。 */
@@ -185,41 +189,32 @@ function meaningLines(t) {
   return fallback ? [fallback] : ['（无通用释义）'];
 }
 
+function entryBody(e) {
+  if (!e) return `<div class="wb-loading">词典未收录该词。</div>`;
+  return meaningLines(e[0]).map(ln => {
+    const m = ln.match(/^([a-z]+)\.\s*(.*)$/);
+    if (m) return `<div class="pos-line"><span class="pos">${m[1]}.</span>${esc(m[2])}</div>`;
+    return `<div class="pos-line">${esc(ln)}</div>`;
+  }).join('');
+}
+
 function bubbleHtml(lk) {
   const e = lk.entry;
-  let lemmaNote = '';
-  if (lk.key.toLowerCase() !== lk.lemma.toLowerCase()) {
-    const label = lk.kind === 'compound' ? ' 中的核心词'
-      : lk.kind === 'possessive' ? ' 的所有格'
-      : lk.kind === 'contraction' ? ' 的缩写'
-      : ' 的原形';
-    lemmaNote = `<span class="lemma">‹ ${esc(lk.key)}${label}</span>`;
-  }
-  let body = '';
-  if (e) {
-    const lines = meaningLines(e[0]);
-    body = lines.map(ln => {
-      const m = ln.match(/^([a-z]+)\.\s*(.*)$/);
-      if (m) return `<div class="pos-line"><span class="pos">${m[1]}.</span>${esc(m[2])}</div>`;
-      return `<div class="pos-line">${esc(ln)}</div>`;
-    }).join('');
-  } else {
-    body = `<div class="wb-loading">词典未收录该词。</div>`;
-  }
-  const faved = isWordFav(lk.lemma);
-  const cands = Array.isArray(lk.candidates) ? lk.candidates : [];
-  const tabs = cands.length > 1
-    ? `<div class="wb-lemmas">${cands.map((c, i) =>
-        `<button class="wb-lemma${i === (lk.active || 0) ? ' active' : ''}" data-li="${i}">${esc(c.lemma)}</button>`
-      ).join('')}</div>`
-    : '';
+  const faved = isWordFav(lk.key);
+  const bases = Array.isArray(lk.baseSections) ? lk.baseSections : [];
+  const baseHtml = bases.map(b =>
+    `<div class="wb-base">
+       <div class="wb-base-title">原形 ${esc(b.key)}</div>
+       <div class="wb-base-body">${entryBody(b.entry)}</div>
+     </div>`
+  ).join('');
   return `<div class="wb-head">
-      <div class="wb-word">${esc(lk.lemma)}${lemmaNote}
+      <div class="wb-word">${esc(lk.key)}
         ${e && e[1] ? `<div class="wb-phon">/${esc(e[1])}/</div>` : ''}
       </div>
     </div>
-    ${tabs}
-    <div class="wb-body">${body}</div>
+    <div class="wb-body">${entryBody(e)}</div>
+    ${baseHtml}
     <div class="wb-actions">
       <button id="wbSpeakBtn" class="icon-btn" title="朗读单词">${SPEAKER_ICON}</button>
       <button id="wbFavBtn" class="${faved ? 'faved' : ''}">${faved ? '取消收藏' : '收藏该词'}</button>
@@ -268,20 +263,9 @@ function showBubbleAt(lk, rect) {
   bubble.style.display = 'block';
   positionPop(bubble, rect);
   bubbleCtx = lk;
-  bubble.querySelectorAll('.wb-lemma').forEach(btn => {
-    btn.onclick = ev => {
-      ev.stopPropagation();
-      const i = Number(btn.getAttribute('data-li'));
-      if (!lk.candidates || !lk.candidates[i]) return;
-      lk.active = i;
-      lk.lemma = lk.candidates[i].lemma;
-      lk.entry = lk.candidates[i].entry;
-      showBubbleAt(lk, rect);
-    };
-  });
   bindFavBtn(lk);
-  bindSpeakBtn(lk.lemma);
-  bindAiBtn(lk.lemma);
+  bindSpeakBtn(lk.key);
+  bindAiBtn(lk.key);
 }
 
 /* 点击位置取词：必须真正落在单词文字的实际包围盒内，行内空白/间隙不触发 */
@@ -355,67 +339,57 @@ function wordFromInput(el) {
   };
 }
 
-function normalizeLiveWord(raw) {
-  let w = String(raw).toLowerCase()
+function normalizeDictWord(raw) {
+  return String(raw).toLowerCase()
     .replace(/[’‘]/g, "'")
     .replace(/^[^a-z]+|[^a-z']+$/g, '');
-  if (w.endsWith("'s")) w = w.slice(0, -2);
-  return w;
 }
 
-function formBaseFromNote(entry) {
-  if (!entry || !entry[0]) return null;
-  const lines = String(entry[0])
-    .replace(/\\r/g, '\n')
-    .replace(/\\n/g, '\n')
-    .split('\n')
-    .map(stripDomainSense)
-    .filter(Boolean);
-  if (lines.length !== 1) return null;
-  const m = lines[0].match(/^([A-Za-z][A-Za-z'-]*)\s*的\s*(?:过去式|过去分词|现在分词|现在式|现在式第三人称单数?|复数|第三人称单数|比较级|最高级|缩写|变形|形式)(?:\s*和\s*(?:过去式|过去分词))?\s*[。.]?$/);
-  return m ? m[1].toLowerCase() : null;
+function dictEntryFor(dict, surface) {
+  if (dict[surface]) return dict[surface];
+  if (surface.endsWith("'s") && dict[surface.slice(0, -2)]) return dict[surface.slice(0, -2)];
+  const noDots = surface.replace(/\./g, '');
+  if (noDots !== surface && dict[noDots]) return dict[noDots];
+  return null;
 }
 
-function liveCandidates(dict, raw) {
-  const w = normalizeLiveWord(raw);
-  if (!w) return [];
-  const lemmas = Array.isArray(dict.forms[w]) ? dict.forms[w].slice() : [];
-  if (dict.entries[w] && !lemmas.includes(w)) lemmas.unshift(w);
+function formBasesFromEntry(entry, surface) {
+  if (!entry) return [];
   const out = [];
-  const seen = new Set();
-  for (const lemma of lemmas) {
-    let target = lemma;
-    let entry = dict.entries[lemma];
-    const base = formBaseFromNote(entry);
-    if (base && base !== lemma && dict.entries[base]) {
-      target = base;
-      entry = dict.entries[base];
-    }
-    if (entry && !seen.has(target)) {
-      out.push({ lemma: target, entry });
-      seen.add(target);
-    }
+  for (const line of meaningLines(entry[0])) {
+    const m = line.match(/^([A-Za-z][A-Za-z'-]*)\s*的\s*(?:过去式|过去分词|现在分词|现在式|现在式第三人称单数?|复数|第三人称单数|比较级|最高级|缩写|变形|形式)(?:\s*和\s*(?:过去式|过去分词))?\s*[。.]?$/);
+    const base = m ? m[1].toLowerCase() : '';
+    if (base && base !== surface && !out.includes(base)) out.push(base);
   }
   return out;
 }
 
-function showLiveBubble(hit) {
-  const key = hit.raw.toLowerCase();
+function showDictBubble(hit) {
+  const surface = normalizeDictWord(hit.raw);
+  const key = surface || String(hit.raw).toLowerCase();
   bubbleWord = key;
   const rect = hit.rect;
   bubble.style.display = 'block';
   bubble.innerHTML = '<div class="wb-loading">词典加载中…</div>';
   positionPop(bubble, rect);
-  loadLiveDict(livePartKey(hit.raw)).then(dict => {
+  loadDictPart(dictPartKey(surface)).then(dict => {
     if (bubbleWord !== key) return;
-    const cands = liveCandidates(dict, hit.raw);
-    if (!cands.length) {
-      showBubbleAt({ key: hit.raw, lemma: normalizeLiveWord(hit.raw) || hit.raw,
-        entry: null, candidates: [], active: 0, kind: 'live' }, rect);
+    const entry = dictEntryFor(dict, surface);
+    if (!entry) {
+      showBubbleAt({ key, lemma: key, entry: null, baseSections: [] }, rect);
       return;
     }
-    showBubbleAt({ key: hit.raw, lemma: cands[0].lemma, entry: cands[0].entry,
-      candidates: cands, active: 0, kind: 'live' }, rect);
+    // The dictionary entry owns the form note; resolve its base entries too.
+    const bases = formBasesFromEntry(entry, surface);
+    return Promise.all(bases.map(base =>
+      loadDictPart(dictPartKey(base)).then(part => {
+        const baseEntry = dictEntryFor(part, base);
+        return baseEntry ? { key: base, entry: baseEntry } : null;
+      }).catch(() => null)
+    )).then(sections => {
+      if (bubbleWord !== key) return;
+      showBubbleAt({ key, lemma: key, entry, baseSections: sections.filter(Boolean) }, rect);
+    });
   }).catch(() => {
     if (bubbleWord !== key) return;
     bubble.innerHTML = '<div class="wb-loading">词典加载失败，请稍后重试</div>';
@@ -762,7 +736,7 @@ aiInput.addEventListener('click', ev => {
   if (ev.offsetX > aiInput.clientWidth - 20) return;
   setTimeout(() => {
     const hit = wordFromInput(aiInput);
-    if (hit) showLiveBubble(hit);
+    if (hit) showDictBubble(hit);
   }, 0);
 });
 const aiSendBtn = $('#aicSend');
@@ -1337,14 +1311,7 @@ document.addEventListener('mouseup', ev => {
         bubble.style.display = 'none';
         return;
       }
-      if (hit.live) {
-        showLiveBubble(hit);
-        return;
-      }
-      const lk = lookupWord(hit.raw, hit.sec, hit.blk);
-      if (!lk) { bubbleWord = null; return; }
-      bubbleWord = key;
-      showBubbleAt(lk, hit.rect);
+      showDictBubble(hit);
     } else {
       // 点在空白处：关闭气泡
       bubbleWord = null;

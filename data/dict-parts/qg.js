@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["qg"]={"qgp":["abbr. quark gluon plasma 夸克胶子电浆态","k'ju:dʒ'i:p'i:"]};

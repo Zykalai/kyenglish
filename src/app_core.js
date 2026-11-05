@@ -53,12 +53,8 @@ const PAPER_MAP = {};
 PAPERS.forEach(p => PAPER_MAP[p.year] = p);
 
 /* ============================================================
- * 词典：离线预处理的词形表 + 权威词典释义
- * 词形与释义由 tools/lexicon/build.py 离线生成；运行时只查表。
+ * 词典释义展示辅助
  * ============================================================ */
-const LEXICON = (typeof LEXICON_DATA !== 'undefined' && LEXICON_DATA) || {};
-const WORDMAP = (typeof WORDMAP_DATA !== 'undefined' && WORDMAP_DATA) || { global: {}, sections: {}, blocks: {} };
-
 const POS_RE = /\s+(?=(?:n|v|a|adj|adv|ad|vt|vi|prep|conj|pron|num|int|art|aux|suf|pref|abbr|neg)\.\s)/g;
 
 function splitMeanings(t) {
@@ -72,42 +68,6 @@ function shortMean(t) {
   let s = m[0] || t || '';
   s = s.replace(/^(?:n|v|a|adj|adv|ad|vt|vi|prep|conj|pron|num|int|art|aux|suf|pref|abbr)\.\s*/, '');
   return s.split(/[；;,，]/)[0].slice(0, 16);
-}
-
-function normalizeSurface(raw) {
-  return String(raw || '')
-    .replace(/[‘’]/g, "'")
-    .replace(/^[^A-Za-zÀ-ÖØ-öø-ÿ0-9']+/, '')
-    .replace(/[^A-Za-zÀ-ÖØ-öø-ÿ0-9'’]+$/, '');
-}
-function mapGet(m, surface) {
-  if (!m) return null;
-  return m[surface] || m[surface.toLowerCase()] || null;
-}
-
-/* 查词：当前年份/板块/段落覆盖表 → 全局表 → 词典。
-   返回 { key 原词, lemma 显示词, entry [释义, 音标], kind } */
-function lookupWord(raw, sec, blk) {
-  const surface = normalizeSurface(raw);
-  if (!surface || !/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(surface)) return null;
-  const year = state.year == null ? '' : String(state.year);
-  let lemma = null;
-  const bm = WORDMAP.blocks && WORDMAP.blocks[year] && WORDMAP.blocks[year][sec] && WORDMAP.blocks[year][sec][blk];
-  if (bm) lemma = mapGet(bm, surface);
-  if (!lemma && sec) {
-    const sm = WORDMAP.sections && WORDMAP.sections[year] && WORDMAP.sections[year][sec];
-    if (sm) lemma = mapGet(sm, surface);
-  }
-  if (!lemma) lemma = mapGet(WORDMAP.global, surface);
-  if (!lemma) lemma = surface;
-  const entry = LEXICON[lemma] || LEXICON[surface] || null;
-  let kind = 'inflection';
-  if (surface.toLowerCase() !== lemma.toLowerCase()) {
-    if (surface.indexOf('-') >= 0) kind = 'compound';
-    else if (/(?:'s|’s|s'|s’)$/.test(surface)) kind = 'possessive';
-    else if (surface.indexOf("'") >= 0) kind = 'contraction';
-  }
-  return { key: surface, lemma, entry, kind };
 }
 
 /* ============================================================

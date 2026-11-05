@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["xn"]={"xn":["abbr. 无新股票权（ex new）",""],"xns":["[计] 施乐网络服务系统",""],"xnxx":["色情网站Xnxx",""]};

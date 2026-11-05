@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["hx"]={"hx":["abbr. 卤化氢；香港航空（Hong Kong Airlines）",""],"hxc":["硬核；hardcore 的缩写",""],"hxr":["[化] 肌苷",""]};

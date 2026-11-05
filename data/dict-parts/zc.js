@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["zc"]={"zc":["abbr. 泽迦利亚（Zechariah, 希伯来先知）",""],"zcr":["[计] 零相交率",""],"zctu":["abbr. Zambia Congress of Trade Union 赞比亚工会联合会",""]};

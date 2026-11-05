@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
-"""End-to-end checks for the rebuilt lexicon.
+"""End-to-end checks for the dictionary-first reader.
 
-Run after tools/lexicon/build.py + tools/assemble.py:
+Run after tools/assemble.py + tools/lexicon/build_dict.py:
     python tools/lexicon/verify.py
 """
-import os
-from pathlib import Path
-import sys
 import io
+import os
+import sys
+from pathlib import Path
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 from playwright.sync_api import sync_playwright
 
 BASE = Path(__file__).resolve().parents[2]
 URL = (BASE / "index.html").as_uri()
-WORD_RE = r"[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-z0-9À-ÖØ-öø-ÿ'’&.\-]*"
 CHANNEL = os.environ.get("PLAYWRIGHT_CHANNEL", "msedge").strip()
 results = []
 
@@ -24,30 +23,6 @@ def check(name, cond, detail=""):
     print(("PASS " if cond else "FAIL ") + name + (" | " + str(detail) if detail else ""))
 
 
-COVER_JS = """
-() => {
-  const out = { total: 0, missing: [] };
-  document.querySelectorAll('#paperView [data-blk]').forEach(block => {
-    const sec = block.closest('.sec') ? block.closest('.sec').id.replace(/^sec-/, '') : 'head';
-    const blk = block.getAttribute('data-blk');
-    const text = block.innerText || '';
-    const re = /%s/g;
-    let m;
-    while ((m = re.exec(text)) !== null) {
-      const raw = m[0].replace(/^[.'’&\\-]+|[.'’&\\-]+$/g, '');
-      if (!raw || !/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(raw)) continue;
-      out.total++;
-      const r = lookupWord(raw, sec, blk);
-      if (!r || !r.entry) {
-        out.missing.push([sec, blk, raw, r && r.lemma]);
-      }
-    }
-  });
-  return out;
-}
-""" % WORD_RE
-
-# find a word inside a block, scroll the containing paragraph into view, return click point
 LOCATE_JS = """
 ([sel, word]) => {
   const root = document.querySelector(sel);
@@ -56,11 +31,9 @@ LOCATE_JS = """
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   let node;
   while (node = walker.nextNode()) {
-    const text = node.textContent;
-    const idx = text.toLowerCase().indexOf(target);
+    const idx = node.textContent.toLowerCase().indexOf(target);
     if (idx >= 0) {
-      const block = node.parentElement.closest('p') || node.parentElement;
-      block.scrollIntoView({ block: 'center' });
+      (node.parentElement.closest('p') || node.parentElement).scrollIntoView({ block: 'center' });
       return true;
     }
   }
@@ -75,8 +48,7 @@ COORD_JS = """
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   let node;
   while (node = walker.nextNode()) {
-    const text = node.textContent;
-    const idx = text.toLowerCase().indexOf(target);
+    const idx = node.textContent.toLowerCase().indexOf(target);
     if (idx >= 0) {
       const range = document.createRange();
       range.setStart(node, idx);
@@ -88,6 +60,34 @@ COORD_JS = """
   return null;
 }
 """
+
+
+def bubble_text(page):
+    return page.eval_on_selector("#wordBubble", "el => el.innerText")
+
+
+def wait_bubble(page, wanted):
+    for _ in range(60):
+        page.wait_for_timeout(100)
+        text = bubble_text(page)
+        if text and "加载中" not in text and wanted.lower() in text.lower():
+            return text
+    return bubble_text(page)
+
+
+def click_word(page, selector, word):
+    ok = page.evaluate(LOCATE_JS, [selector, word])
+    page.wait_for_timeout(250)
+    pos = page.evaluate(COORD_JS, [selector, word]) if ok else None
+    if not pos:
+        return ""
+    page.mouse.click(pos["x"], pos["y"])
+    return wait_bubble(page, word)
+
+
+def close_bubble(page):
+    page.evaluate("document.getElementById('wordBubble').style.display='none'; bubbleWord=null;")
+
 
 with sync_playwright() as p:
     launch_kwargs = {"headless": True}
@@ -104,100 +104,54 @@ with sync_playwright() as p:
     check("页面无 JS 异常", not errors, errors[:3])
     check("无考研徽章节点", page.eval_on_selector_all(".wb-ky", "els => els.length") == 0)
 
-    # every rendered paper word resolves to an entry
-    grand = {"total": 0, "missing": []}
-    for year in range(2010, 2027):
-        page.goto(URL + "#/" + str(year))
-        page.wait_for_timeout(180)
-        r = page.evaluate(COVER_JS)
-        grand["total"] += r["total"]
-        grand["missing"].extend([[year] + x for x in r["missing"]])
-    check("卷面全部单词有词典释义", not grand["missing"],
-          f"{grand['total']} tokens, missing {len(grand['missing'])}" + (
-              " " + str(grand["missing"][:5]) if grand["missing"] else ""))
-
-    # direct lemma checks
-    page.goto(URL + "#/2022")
-    page.wait_for_timeout(400)
-    checks = [
-        (("Brown’s", "reading1", "p0"), "Brown"),
-        (("studies", "reading2", None), "study"),
-        (("US", "reading1", None), "US"),
-        (("us", "reading1", None), "we"),
-        (("don't", "reading2", "p0"), "do"),
-    ]
-    for args, expected in checks:
-        r = page.evaluate("([raw,sec,blk]) => { const x = lookupWord(raw,sec,blk); return x && x.lemma; }", list(args))
-        check(f"词形 {args[0]} -> {expected}", r == expected, r)
-
-    page.goto(URL + "#/2011")
-    page.wait_for_timeout(400)
-    for blk, expected in [("p0", "follow"), ("instr", "following")]:
-        r = page.evaluate("([blk]) => { const x = lookupWord('following','reading3',blk); return x && x.lemma; }", [blk])
-        check(f"2011 following {blk} -> {expected}", r == expected, r)
-
-    page.goto(URL + "#/2026")
-    page.wait_for_timeout(400)
-    for blk, expected in [("p4", "leave"), ("instr", "left")]:
-        r = page.evaluate("([blk]) => { const x = lookupWord('left','newtype',blk); return x && x.lemma; }", [blk])
-        check(f"2026 left {blk} -> {expected}", r == expected, r)
-
-    page.goto(URL + "#/2025/reading4")
-    page.wait_for_timeout(400)
-    for word, expected in [("unspoken", "unspeak"), ("trodden", "tread")]:
-        r = page.evaluate("([w]) => { const x = lookupWord(w,'reading4',null); return x && x.lemma; }", [word])
-        check(f"2025 {word} -> {expected}", r == expected, r)
-
-    # paper word -> static bubble; AI / favorites -> live precomputed bubble
+    # paper: direct dictionary lookup
     page.goto(URL + "#/2025/reading1")
-    page.wait_for_timeout(700)
-    ok = page.evaluate(LOCATE_JS, ["#sec-reading1 .passage", "tipped"])
-    page.wait_for_timeout(250)
-    pos = page.evaluate(COORD_JS, ["#sec-reading1 .passage", "tipped"]) if ok else None
-    if pos:
-        page.mouse.click(pos["x"], pos["y"])
-        page.wait_for_timeout(350)
-    txt = page.eval_on_selector("#wordBubble", "el => el.innerText")
-    check("卷面点词弹出卡片", "tip" in txt and "考研" not in txt, txt[:80].replace("\n", " | "))
+    page.wait_for_timeout(600)
+    txt = click_word(page, "#sec-reading1 .passage", "tipped")
+    check("卷面点词弹出卡片", "tip" in txt.lower() and "考研" not in txt, txt[:80].replace("\n", " | "))
+    close_bubble(page)
 
-    page.evaluate("loadLiveDict('t')")
-    page.wait_for_function("window.__LIVE_DICT_PARTS__ && Object.keys(window.__LIVE_DICT_PARTS__.t.entries).length > 0", timeout=30000)
-    page.evaluate("loadLiveDict('f')")
-    page.wait_for_function("window.__LIVE_DICT_PARTS__ && Object.keys(window.__LIVE_DICT_PARTS__.f.entries).length > 0", timeout=30000)
+    # AI answer: same dictionary path
     page.evaluate("document.getElementById('aiChat').hidden=false; document.getElementById('aiFab').hidden=true; appendMsg('ai','This is a test sentence for clicking.');")
     page.wait_for_timeout(300)
     page.eval_on_selector("#aicMessages .aic-ai", "el => el.scrollIntoView({block:'center'})")
-    page.wait_for_timeout(200)
-    pos = page.evaluate(COORD_JS, ["#aicMessages .aic-ai", "test"])
-    if pos:
-        page.mouse.click(pos["x"], pos["y"])
-    for _ in range(60):
-        page.wait_for_timeout(100)
-        if page.eval_on_selector("#wordBubble", "el => el.style.display") == "block":
-            break
-    disp = page.eval_on_selector("#wordBubble", "el => el.style.display")
-    txt = page.eval_on_selector("#wordBubble", "el => el.innerText")
-    check("AI 窗点词弹出实时卡片", disp == "block" and "test" in txt.lower(), txt[:80].replace("\n", " | "))
+    page.wait_for_timeout(150)
+    txt = click_word(page, "#aicMessages .aic-ai", "test")
+    check("AI 窗点词弹出卡片", "test" in txt.lower(), txt[:80].replace("\n", " | "))
+    close_bubble(page)
 
+    # AI input: textarea caret -> dictionary card
+    page.evaluate("""() => {
+      const el = document.querySelector('#aicInput');
+      el.value = 'The left side of the road';
+      el.focus();
+      el.setSelectionRange(4, 4);
+      el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    }""")
+    txt = wait_bubble(page, "left")
+    check("AI 输入框点词弹出卡片", "left" in txt.lower(), txt[:80].replace("\n", " | "))
+    close_bubble(page)
+
+    # favorites: same dictionary path
     page.evaluate("state.favorites=[{type:'sent',text:'This is a favorite sentence.',label:'T',time:'12:00'}]; state.favTab='sent'; renderFavorites(); togglePanel(true);")
     page.wait_for_timeout(300)
     page.eval_on_selector("#wpBody .s-text", "el => el.scrollIntoView({block:'center'})")
-    page.wait_for_timeout(200)
-    pos = page.evaluate(COORD_JS, ["#wpBody .s-text", "favorite"])
-    if pos:
-        page.mouse.click(pos["x"], pos["y"])
-    for _ in range(20):
-        page.wait_for_timeout(100)
-        if page.eval_on_selector("#wordBubble", "el => el.style.display") == "block":
-            break
-    disp = page.eval_on_selector("#wordBubble", "el => el.style.display")
-    txt = page.eval_on_selector("#wordBubble", "el => el.innerText")
-    check("收藏句子点词弹出实时卡片", disp == "block" and "favorite" in txt.lower(), txt[:80].replace("\n", " | "))
+    page.wait_for_timeout(150)
+    txt = click_word(page, "#wpBody .s-text", "favorite")
+    check("收藏句子点词弹出卡片", "favorite" in txt.lower(), txt[:80].replace("\n", " | "))
 
-    page.evaluate("loadLiveDict('u')")
-    page.wait_for_function("window.__LIVE_DICT_PARTS__ && window.__LIVE_DICT_PARTS__.u", timeout=30000)
-    r = page.evaluate("() => liveCandidates(window.__LIVE_DICT_PARTS__.u, 'unspoken').map(x => x.lemma).join(',')")
-    check("词形注释 unspoken -> unspeak", r == "unspeak", r)
+    # form-note entries insert the base definition as an extra section
+    page.goto(URL + "#/2025/reading4")
+    page.wait_for_timeout(600)
+    txt = click_word(page, "#sec-reading4", "unspoken")
+    check("unspoken 显示原形 unspeak",
+          "unspoken" in txt.lower() and "unspeak的过去分词" in txt and "原形 unspeak" in txt,
+          txt[:120].replace("\n", " | "))
+    close_bubble(page)
+    txt = click_word(page, "#sec-reading4", "trodden")
+    check("trodden 显示原形 tread",
+          "trodden" in txt.lower() and "tread的过去分词" in txt and "原形 tread" in txt,
+          txt[:120].replace("\n", " | "))
 
     browser.close()
 

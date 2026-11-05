@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["zg"]={"zg":["abbr. 动物园（zoological garden）；零重量（zero gravity）",""]};

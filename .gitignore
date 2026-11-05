@@ -12,11 +12,8 @@
 !/cloudflare_worker.js
 !.gitignore
 
-# 66MB 原始 ECDICT 只留在本地，构建产物已在 data/lexicon 中
+# 66MB 原始 ECDICT 只留在本地，运行时词典在 data/dict-parts 中
 /data/dict/ecdict.csv
-
-# 离线预处理中间文件（blocks/report/undecided），可由 build.py 重新生成
-/data/lexicon/work/
 
 # 旧调试脚本与铃声素材不参与网页构建；只保留组装与词典构建脚本
 /tools/*

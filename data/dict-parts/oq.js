@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["oq"]={"oq":["abbr. oil quench 油淬火的; overmation quotient 过量信息份额",""],"oqpst":["[化] 克泻痢宁",""],"oquassa":["n. [鱼]蓝背红点鲑(产于美国缅因州西部奥夸萨湖)","әu'kwæsә"],"oquawka":["[地名] [美国] 奥阔卡",""]};

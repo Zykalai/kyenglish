@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["ql"]={"ql":["abbr. 查询语言（query language）",""],"qld":["abbr. 昆士兰州（Queensland, 澳大利亚的第二大州）",""],"qlg":["abbr. quick-look guide 快查指南",""],"qllc":["限定逻辑链路控制",""],"qlq":["abbr. quality of life questionnaire 生活质量问卷调查表",""],"qls":["快速法律系统",""],"qlt":["abbr. quilt 棉被","k'ju:'elt'i:"]};

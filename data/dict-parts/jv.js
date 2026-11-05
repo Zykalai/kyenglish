@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["jv"]={"jv":["abbr. 资浅代表队（Junior Varsity）",""],"jvc":["n. 日本胜利公司",""],"jvm":["abbr. Java虚拟机（Java Visual Machine）",""],"jvncnet":["[计] 约翰.冯.诺依曼计算机网络, JvNC网络",""],"jvp":["[医][=jugular venous pressure]颈静脉压","d'ʒeɪv'i:p'i:"],"jvs":["abbr. Jewish Vocational Service 犹太职业服务; Joint Vocational School 联合职业学校",""]};

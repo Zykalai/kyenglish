@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["qh"]={"qh":["abbr. （拉）每小时（quaque hora）",""]};

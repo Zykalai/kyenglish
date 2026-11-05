@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["zd"]={"zd":["n. 天顶距（zenith distance）；零色散（Zero Dispersion）",""],"zdnet":["abbr. Ziff-Davis出版公司",""],"zdpr":["abbr. zero defects program responsibility 零差错计划责任","'zi:d'i:p'i:'ɑ:r"],"zdv":["[网络] 齐多夫定(Zidovudine)；叠氮胸苷；叠氮脱氧胸苷",""]};

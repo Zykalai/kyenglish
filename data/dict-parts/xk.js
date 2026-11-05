@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["xk"]={"xkcd":["与网络漫画xkcd相关的各种古怪行为（戏称）",""]};

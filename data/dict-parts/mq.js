@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["mq"]={"mq":["abbr. 乘数-商寄存器（Memory Quotient）；[域]马提尼克岛（法属）（Martinique）",""],"mqorality":["道德, 道义","mә'ræliti"],"mqr":["[计]= Multiplier-Quotient Register,乘商寄存器",""],"mqt":["[化] 多量子跃迁",""]};

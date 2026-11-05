@@ -1,0 +1,1 @@
+window.__DICT_PARTS__=window.__DICT_PARTS__||{};window.__DICT_PARTS__["jg"]={"jg":["abbr. 少尉（junior grade）",""]};
