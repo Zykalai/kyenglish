@@ -120,6 +120,15 @@ with sync_playwright() as p:
     check("AI 窗点词弹出卡片", "test" in txt.lower(), txt[:80].replace("\n", " | "))
     close_bubble(page)
 
+    page.evaluate("appendMsg('ai','The spaces are limited.');")
+    page.wait_for_timeout(250)
+    page.eval_on_selector("#aicMessages .aic-ai:last-child", "el => el.scrollIntoView({block:'center'})")
+    page.wait_for_timeout(150)
+    txt = click_word(page, "#aicMessages .aic-ai:last-child", "spaces")
+    check("释义中的英文词追加卡片", "原形 space" in txt and "空间" in txt,
+          txt[:120].replace("\n", " | "))
+    close_bubble(page)
+
     # AI input: textarea caret -> dictionary card
     page.evaluate("""() => {
       const el = document.querySelector('#aicInput');

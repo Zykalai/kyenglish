@@ -204,7 +204,7 @@ function bubbleHtml(lk) {
   const bases = Array.isArray(lk.baseSections) ? lk.baseSections : [];
   const baseHtml = bases.map(b =>
     `<div class="wb-base">
-       <div class="wb-base-title">原形 ${esc(b.key)}</div>
+       <div class="wb-base-title">${esc(b.label || '原形')} ${esc(b.key)}</div>
        <div class="wb-base-body">${entryBody(b.entry)}</div>
      </div>`
   ).join('');
@@ -290,7 +290,7 @@ function wordAtPoint(x, y) {
     node = p.offsetNode; offset = p.offset;
   } else return null;
   if (node.nodeType !== 3) return null;
-  // 卷面 .can-lookup 走静态词典；AI 对话/收藏等 .can-lookup-live 走预生成索引
+  // 卷面与 AI/收藏都用同一份直接词典；两个类只是标记可点区域
   const hostEl = node.parentElement;
   if (!hostEl || !hostEl.closest) return null;
   const staticHost = hostEl.closest('.can-lookup');
@@ -317,7 +317,7 @@ function wordAtPoint(x, y) {
   const sec = secEl ? secEl.id.replace(/^sec-/, '') : 'head';
   const blkEl = hostEl.closest('[data-blk]');
   const blk = blkEl ? blkEl.getAttribute('data-blk') : null;
-  return { raw, rect, sec, blk, live: !staticHost };
+  return { raw, rect, sec, blk };
 }
 
 function wordFromInput(el) {
@@ -333,7 +333,6 @@ function wordFromInput(el) {
   const r = el.getBoundingClientRect();
   return {
     raw,
-    live: true,
     rect: { left: r.left + 10, right: r.right - 10, top: r.top, bottom: r.bottom,
       width: Math.max(80, Math.min(240, r.width - 20)), height: r.height }
   };
@@ -353,15 +352,33 @@ function dictEntryFor(dict, surface) {
   return null;
 }
 
-function formBasesFromEntry(entry, surface) {
+const POS_TOKENS = new Set([
+  'n', 'v', 'a', 'ad', 'adj', 'adv', 'vt', 'vi', 'prep', 'conj', 'pron',
+  'num', 'art', 'aux', 'suf', 'pref', 'abbr', 'neg', 'pl', 'sing'
+]);
+const STOP_TOKENS = new Set([
+  'the', 'and', 'or', 'of', 'to', 'in', 'on', 'for', 'with', 'at', 'by',
+  'from', 'as', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'this',
+  'that', 'these', 'those', 'it', 'its', 'he', 'she', 'they', 'we', 'you',
+  'i', 'not', 'no', 'do', 'does', 'did', 'can', 'could', 'will', 'would',
+  'shall', 'should', 'may', 'might', 'must', 'if', 'than', 'then', 'so',
+  'such', 'etc'
+]);
+const FORM_SUFFIX = '(?:过去式|过去分词|现在分词|现在式|现在式第三人称单数?|复数|第三人称单数|比较级|最高级|缩写|变形|形式)';
+
+function englishRefsFromEntry(entry, surface) {
   if (!entry) return [];
-  const out = [];
-  for (const line of meaningLines(entry[0])) {
-    const m = line.match(/^([A-Za-z][A-Za-z'-]*)\s*的\s*(?:过去式|过去分词|现在分词|现在式|现在式第三人称单数?|复数|第三人称单数|比较级|最高级|缩写|变形|形式)(?:\s*和\s*(?:过去式|过去分词))?\s*[。.]?$/);
-    const base = m ? m[1].toLowerCase() : '';
-    if (base && base !== surface && !out.includes(base)) out.push(base);
+  const text = meaningLines(entry[0]).join(' ');
+  const tokens = new Set();
+  for (const m of text.matchAll(/[A-Za-z][A-Za-z'-]*/g)) {
+    let token = m[0].toLowerCase().replace(/^['-]+|['-]+$/g, '');
+    if (token.length < 2 || POS_TOKENS.has(token) || token === surface) continue;
+    const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const isForm = new RegExp(escaped + '\\s*的\\s*' + FORM_SUFFIX).test(text);
+    if (!isForm && STOP_TOKENS.has(token)) continue;
+    tokens.add(JSON.stringify({ key: token, label: isForm ? '原形' : '相关词' }));
   }
-  return out;
+  return [...tokens].map(x => JSON.parse(x));
 }
 
 function showDictBubble(hit) {
@@ -372,24 +389,39 @@ function showDictBubble(hit) {
   bubble.style.display = 'block';
   bubble.innerHTML = '<div class="wb-loading">词典加载中…</div>';
   positionPop(bubble, rect);
-  loadDictPart(dictPartKey(surface)).then(dict => {
+  loadDictPart(dictPartKey(surface)).then(async dict => {
     if (bubbleWord !== key) return;
     const entry = dictEntryFor(dict, surface);
     if (!entry) {
       showBubbleAt({ key, lemma: key, entry: null, baseSections: [] }, rect);
       return;
     }
-    // The dictionary entry owns the form note; resolve its base entries too.
-    const bases = formBasesFromEntry(entry, surface);
-    return Promise.all(bases.map(base =>
-      loadDictPart(dictPartKey(base)).then(part => {
-        const baseEntry = dictEntryFor(part, base);
-        return baseEntry ? { key: base, entry: baseEntry } : null;
-      }).catch(() => null)
-    )).then(sections => {
-      if (bubbleWord !== key) return;
-      showBubbleAt({ key, lemma: key, entry, baseSections: sections.filter(Boolean) }, rect);
-    });
+    // Definitions may contain another English word (space的复数, 原形...).
+    // Follow those words recursively, with cycle/depth/section caps.
+    const sections = [];
+    const seen = new Set([surface]);
+    const queue = [{ key: surface, entry, depth: 0 }];
+    while (queue.length && sections.length < 8) {
+      const cur = queue.shift();
+      for (const ref of englishRefsFromEntry(cur.entry, cur.key)) {
+        if (seen.has(ref.key)) continue;
+        seen.add(ref.key);
+        try {
+          const part = await loadDictPart(dictPartKey(ref.key));
+          if (bubbleWord !== key) return;
+          const refEntry = dictEntryFor(part, ref.key);
+          if (!refEntry) continue;
+          sections.push({ key: ref.key, entry: refEntry, label: ref.label });
+          if (cur.depth < 3 && sections.length < 8) {
+            queue.push({ key: ref.key, entry: refEntry, depth: cur.depth + 1 });
+          }
+        } catch (e) {
+          // A missing chunk must not break the whole card.
+        }
+      }
+    }
+    if (bubbleWord !== key) return;
+    showBubbleAt({ key, lemma: key, entry, baseSections: sections }, rect);
   }).catch(() => {
     if (bubbleWord !== key) return;
     bubble.innerHTML = '<div class="wb-loading">词典加载失败，请稍后重试</div>';
@@ -942,7 +974,7 @@ function streamChat(messages, onDelta) {
 
 function appendMsg(role, text) {
   const div = document.createElement('div');
-  // AI 对话不属于卷面，走后加载的预生成词形索引
+  // AI 对话和卷面共用同一套直接词典
   div.className = 'aic-msg aic-' + role + ' can-select can-lookup-live';
   if (role === 'ai') div.innerHTML = renderMarkdown(text);
   else div.textContent = text;
@@ -966,7 +998,7 @@ async function sendUserMessage(text, isPreset) {
   appendMsg('user', content);
   aiHistory.push({ role: 'user', content: content });
   const aiDiv = document.createElement('div');
-  aiDiv.className = 'aic-msg aic-ai can-select can-lookup-live streaming'; // AI 回答支持点词/划句，但不走卷面静态词典
+  aiDiv.className = 'aic-msg aic-ai can-select can-lookup-live streaming'; // AI 回答支持点词/划句，与卷面同一查词逻辑
   aiMessages.appendChild(aiDiv);
   followBottom();
   aiStreaming = true;
@@ -1174,8 +1206,8 @@ function askAiCustom(kind, content) {
   else aiInput.selectionStart = aiInput.selectionEnd = len;
 }
 
-/* 防穿透：头部/输入区/悬浮球的交互不冒泡到正文；消息区(.can-select)只放行划句，
-   点词仍由卷面 .can-lookup 门控（内部按钮直接绑定，不依赖冒泡） */
+/* 防穿透：头部/输入区/悬浮球的交互不冒泡到正文；消息区放行划句和点词，
+   点词由 .can-lookup / .can-lookup-live 可点区域门控（内部按钮直接绑定） */
 const aicHeadEl = aiChat.querySelector('.aic-head');
 const aicInputEl = aiChat.querySelector('.aic-input-row');
 ['mousedown', 'mouseup', 'click'].forEach(type => {
@@ -1253,7 +1285,7 @@ function currentSecLabel(range) {
 }
 
 /* ---------------- 鼠标交互绑定 ---------------- */
-/* 卷面 .can-lookup 走静态词典；AI/收藏等 .can-lookup-live 走预生成索引 */
+/* 卷面与 AI/收藏都走同一份直接词典，只是可点区域类名不同 */
 const LOOKUP_ZONE = '.can-lookup, .can-lookup-live';
 function isInside(el, target) {
   return el && el.contains(target);
