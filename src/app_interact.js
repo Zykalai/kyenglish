@@ -160,11 +160,29 @@ function speakText(text) {
   } else say();
 }
 
-/* 兼容两种释义格式：考研词典用真实 \n 分行；compact 词典用词性标签空格连接 */
+/* 兼容两种释义格式：考研词典用真实换行；ECDICT 有时是字面量 \n。
+   同时去掉 [计]、[经]、[化] 这类附加领域释义。 */
+function stripDomainSense(line) {
+  let s = String(line || '').trim();
+  if (!s) return '';
+  if (/^\[[^\]]{1,10}\]/.test(s)) return '';
+  s = s.replace(/\s*\[[^\]]{1,10}\][\s\S]*$/, '').trim();
+  return s;
+}
+
 function meaningLines(t) {
   if (!t) return [];
-  if (t.includes('\n')) return t.split('\n').map(x => x.trim()).filter(Boolean);
-  return splitMeanings(t);
+  const normalized = String(t)
+    .replace(/\\r/g, '\n')
+    .replace(/\\n/g, '\n')
+    .replace(/\r\n?/g, '\n');
+  const raw = normalized.includes('\n')
+    ? normalized.split('\n')
+    : splitMeanings(normalized);
+  const lines = raw.map(stripDomainSense).filter(Boolean);
+  if (lines.length) return lines;
+  const fallback = stripDomainSense(normalized);
+  return fallback ? [fallback] : ['（无通用释义）'];
 }
 
 function bubbleHtml(lk) {
