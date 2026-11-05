@@ -207,7 +207,7 @@ function bubbleHtml(lk) {
   const bases = Array.isArray(lk.baseSections) ? lk.baseSections : [];
   const baseHtml = bases.map(b =>
     `<div class="wb-base">
-       <div class="wb-base-title">${esc(b.label || '原形')} ${esc(b.key)}</div>
+       <div class="wb-base-title"><span class="wb-base-label">${esc(b.label || '原形')}</span><span class="wb-base-word">${esc(b.key)}</span></div>
        <div class="wb-base-body">${entryBody(b.entry)}</div>
      </div>`
   ).join('');

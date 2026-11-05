@@ -125,7 +125,7 @@ with sync_playwright() as p:
     page.eval_on_selector("#aicMessages .aic-ai:last-child", "el => el.scrollIntoView({block:'center'})")
     page.wait_for_timeout(150)
     txt = click_word(page, "#aicMessages .aic-ai:last-child", "spaces")
-    check("释义中的英文词追加卡片", "原形 space" in txt and "空间" in txt,
+    check("释义中的英文词追加卡片", "原形" in txt and "space" in txt and "空间" in txt,
           txt[:120].replace("\n", " | "))
     close_bubble(page)
 
@@ -154,12 +154,12 @@ with sync_playwright() as p:
     page.wait_for_timeout(600)
     txt = click_word(page, "#sec-reading4", "unspoken")
     check("unspoken 显示原形 unspeak",
-          "unspoken" in txt.lower() and "unspeak的过去分词" in txt and "原形 unspeak" in txt,
+          "unspoken" in txt.lower() and "unspeak的过去分词" in txt and "原形" in txt and "unspeak" in txt,
           txt[:120].replace("\n", " | "))
     close_bubble(page)
     txt = click_word(page, "#sec-reading4", "trodden")
     check("trodden 显示原形 tread",
-          "trodden" in txt.lower() and "tread的过去分词" in txt and "原形 tread" in txt,
+          "trodden" in txt.lower() and "tread的过去分词" in txt and "原形" in txt and "tread" in txt,
           txt[:120].replace("\n", " | "))
 
     browser.close()
