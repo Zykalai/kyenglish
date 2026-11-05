@@ -77,7 +77,7 @@ def main():
             word = (row.get("word") or "").strip().lower()
             translation = (row.get("translation") or "").strip()
             if word and translation:
-                ecdict.setdefault(word, [translation, (row.get("phonetic") or "").strip()])
+                ecdict.setdefault(word, [translation])
 
     surfaces = set()
     for name in os.listdir(PAPERS):

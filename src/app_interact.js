@@ -212,9 +212,7 @@ function bubbleHtml(lk) {
      </div>`
   ).join('');
   return `<div class="wb-head">
-      <div class="wb-word">${esc(lk.key)}
-        ${e && e[1] ? `<div class="wb-phon">/${esc(e[1])}/</div>` : ''}
-      </div>
+      <div class="wb-word">${esc(lk.key)}</div>
     </div>
     <div class="wb-body">${entryBody(e)}</div>
     ${baseHtml}
@@ -476,7 +474,6 @@ function toggleWordFav(lk) {
     type: 'word',
     lemma: lk.lemma,
     key: lk.key,
-    phonetic: e && e[1] ? e[1] : '',
     meaning: e ? e[0] : '',
     time: nowHHMM()
   });
@@ -540,7 +537,6 @@ function renderFavorites() {
       return `<div class="wp-word" tabindex="0" data-key="${esc(f.lemma)}">
         <div class="w-top">
           <span class="w-lemma">${esc(f.lemma)}</span>
-          ${f.phonetic ? `<span class="w-phon">/${esc(f.phonetic)}/</span>` : ''}
           <button class="w-del" data-del="word" data-key="${esc(f.lemma)}">删除</button>
         </div>
         <div class="w-mean">${esc(shortMean(f.meaning || ''))}</div>
