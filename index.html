@@ -1842,62 +1842,9 @@ function googleTranslate(text) {
   });
 }
 
-/* MyMemory 免费翻译接口：Google 不可达时的兜底，CORS 开放。
-   单次查询限制约 500 字节，长句先按句切块，避免整段失败。 */
-function myMemoryTranslate(text) {
-  const url = 'https://api.mymemory.translated.net/get?q=' +
-    encodeURIComponent(text) + '&langpair=en|zh-CN';
-  return fetchWithTimeout(url, 12000).then(r => r.json()).then(d => {
-    const zh = d && d.responseData && d.responseData.translatedText;
-    if (!zh || /MYMEMORY|WARNING|INVALID|QUERY LENGTH/i.test(zh)) {
-      throw new Error('bad mymemory result');
-    }
-    return String(zh).trim();
-  });
-}
-
-function splitForTranslation(text, max) {
-  const parts = String(text).match(/[^.!?]+[.!?]?\s*/g) || [String(text)];
-  const chunks = [];
-  let cur = '';
-  const flush = () => {
-    const s = cur.trim();
-    if (s) chunks.push(s);
-    cur = '';
-  };
-  for (const raw of parts) {
-    if ((cur + raw).trim().length <= max) {
-      cur += raw;
-      continue;
-    }
-    flush();
-    let rest = raw.trim();
-    if (rest.length <= max) {
-      cur = rest;
-      continue;
-    }
-    while (rest.length > max) {
-      chunks.push(rest.slice(0, max));
-      rest = rest.slice(max);
-    }
-    cur = rest;
-  }
-  flush();
-  return chunks;
-}
-
-function myMemoryTranslateChunks(text) {
-  const chunks = splitForTranslation(text, 300);
-  if (!chunks.length) return Promise.reject(new Error('empty translation'));
-  return chunks.reduce((p, chunk) => p.then(async acc => {
-    const zh = await myMemoryTranslate(chunk);
-    return acc ? acc + zh : zh;
-  }), Promise.resolve(''));
-}
-
-/* Google 神经翻译优先；被墙/超时/空结果时回退 MyMemory */
+/* 只走 Google 神经翻译；失败时由调用方提示网络不通畅，不做其他回退 */
 function translateSentence(text) {
-  return googleTranslate(text).catch(() => myMemoryTranslateChunks(text));
+  return googleTranslate(text);
 }
 
 function bindSpeakBtn(word) {
@@ -2324,7 +2271,7 @@ function runTranslate() {
     positionTransPop(); // 译文回来后高度变化，重新定位
   }).catch(() => {
     if (currentSel !== captured) return;
-    transBody.innerHTML = '<span class="tp-error">翻译失败，请检查网络</span>';
+    transBody.innerHTML = '<span class="tp-error">网络不通畅，Google 翻译暂时连不上，请检查网络后重试</span>';
     positionTransPop();
   });
 }
@@ -2474,6 +2421,14 @@ function renderMarkdown(src) {
   return html;
 }
 
+function aiErrorText(e) {
+  if (/未配置/.test(e.message)) return e.message;
+  if (e.name === 'TypeError' || /Failed to fetch|NetworkError|Load failed/i.test(e.message)) {
+    return 'AI 服务连接不通：当前网络可能无法访问 workers.dev。可设置 e2_aiBaseUrl 指向国内代理后重试。';
+  }
+  return '调用失败，请检查网络或配置后重试（' + e.message + '）';
+}
+
 /* 流式调用：POST Worker 代理 /chat/completions，逐行解析 SSE，onDelta 回传累计文本 */
 function streamChat(messages, onDelta) {
   if (!DOUBAO_CONFIG.endpointId) {
@@ -2590,8 +2545,7 @@ async function sendUserMessage(text, isPreset) {
       aiHistory.pop(); // 回滚失败的用户消息，保持历史对齐
       const errDiv = document.createElement('div');
       errDiv.className = 'aic-msg aic-error';
-      errDiv.textContent = /未配置/.test(e.message) ? e.message :
-        '调用失败，请检查网络或配置后重试（' + e.message + '）';
+      errDiv.textContent = aiErrorText(e);
       aiMessages.appendChild(errDiv);
     }
   } finally {

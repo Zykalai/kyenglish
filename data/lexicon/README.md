@@ -78,7 +78,7 @@ CI 不依赖 spaCy/ECDICT，不需要 66MB 原始词典；它验证的是已提�
 
 ## 网络配置
 
-- **划句翻译**：Google 优先，失败时回退到 MyMemory；长句会按句切块。
+- **划句翻译**：只走 Google 神经翻译；失败时显示“网络不通畅”提示，不做其他回退。
 - **AI 窗口**：默认走 `https://kyenglish.a965684016.workers.dev`。如果当前网络访问 `workers.dev` 不稳定，可以在页面加载前设置自定义 Worker 地址：
 
 ```js
@@ -91,6 +91,8 @@ window.DSH_AI_BASE_URL = 'https://your-worker.example.com';
 localStorage.setItem('e2_aiBaseUrl', 'https://your-worker.example.com');
 location.reload();
 ```
+
+`workers.dev` 在部分网络不可达。不要把 API Key 放到前端；优先给现有 Worker 绑定自定义域名（Cloudflare Dashboard → Worker → Settings → Domains & Routes），仍不通就在国内云/服务器上做一个反代，转发到 `ark.cn-beijing.volces.com`，密钥放服务端。
 
 ## 覆盖
 
