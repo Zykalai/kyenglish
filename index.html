@@ -1697,9 +1697,19 @@ const AI_BASE_URL = String(
   'https://kyenglish-ai-proxy.pages.dev'
 ).trim().replace(/\/+$/, '');
 const DOUBAO_CONFIG = {
-  endpointId: 'ep-20261104014041-94z74', // DeepSeek 接入点
+  endpointId: 'ep-20261104014041-94z74', // 火山方舟接入点（当前实际为豆包 Seed 2.0 Mini）
   baseUrl: AI_BASE_URL
 };
+
+/* 调用层人设：只拼进每次 API 请求的 messages，不写入 aiHistory，也不在页面上显示。
+   目标：让讲解贴近考研英语二、面向基础较弱的学生，少术语、多拆解。 */
+const AI_SYSTEM_PROMPT = [
+  '你是一位有多年考研英语（二）教学经验的老师。',
+  '你正在教一个基础比较薄弱、理解较慢的学生，所以要用简单、直白、循序渐进的方式讲解。',
+  '先给结论，再拆解词汇、句子结构和语法；多用中文解释上下文和考点，避免堆砌术语和长篇大论，也不要用居高临下的语气。',
+  '如果只拿到单词或短语、没有上下文，先说明它可能有多个意思，再结合考研常见语境给出最可能的解释，不要武断；不要编造真题原句或数据，举例时说明是自造句。',
+  '讲解要围绕考研英语二的阅读、完形、翻译和写作，多举真题式例子，指出常见错误和记忆方法，不要泛泛而谈其他考试。'
+].join('');
 
 /* ---------------- 单词气泡 ---------------- */
 const bubble = $('#wordBubble');
@@ -1855,9 +1865,10 @@ function bindAiBtn(word) {
   const btn = $('#wbAiBtn');
   if (btn) btn.onclick = ev => {
     ev.stopPropagation();
+    const ctx = bubbleCtx && bubbleCtx.context;
     bubble.style.display = 'none'; // 点讲解后关闭单词气泡
     bubbleWord = null;
-    askAi('word', word);
+    askAi('word', word, ctx);
   };
   const customBtn = $('#wbAiCustomBtn');
   if (customBtn) customBtn.onclick = ev => {
@@ -1923,7 +1934,12 @@ function wordAtPoint(x, y) {
   const sec = secEl ? secEl.id.replace(/^sec-/, '') : 'head';
   const blkEl = hostEl.closest('[data-blk]');
   const blk = blkEl ? blkEl.getAttribute('data-blk') : null;
-  return { raw, rect, sec, blk };
+  // 段落/题块原文：点「讲解」时一起交给模型，避免只看到单词就猜错语境
+  const ctxEl = blkEl || hostEl.closest('.sec');
+  const context = ctxEl
+    ? String(ctxEl.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 600)
+    : '';
+  return { raw, rect, sec, blk, context };
 }
 
 /* ---------------- 浮层定位 ---------------- */
@@ -2435,6 +2451,8 @@ function streamChat(messages, onDelta) {
     return Promise.reject(new Error('未配置接入点 ID，请在文件顶部 DOUBAO_CONFIG 填写'));
   }
   aiAbort = new AbortController();
+  // 人设只在调用层注入：system 消息不进入 aiHistory，清空记忆/切换模型都不影响
+  const payloadMessages = [{ role: 'system', content: AI_SYSTEM_PROMPT }, ...messages];
   return fetch(DOUBAO_CONFIG.baseUrl + '/chat/completions', {
     method: 'POST',
     headers: {
@@ -2442,7 +2460,7 @@ function streamChat(messages, onDelta) {
     },
     body: JSON.stringify({
       model: DOUBAO_CONFIG.endpointId,
-      messages: messages,
+      messages: payloadMessages,
       stream: true,
       thinking: { type: 'disabled' } // 关闭深度思考：讲解类任务直接作答，大幅降低首字等待（非人设/格式约束）
     }),
@@ -2691,11 +2709,14 @@ $('#aicFontInc').onclick = () => setAiFontSize(aiFontSize + 1);
 
 /* 三个入口统一调用：单词/句子统一开场请求，不再区分类型。
    开场只发一句简短请求，后续由用户自己追问。 */
-function askAi(kind, content) {
+function askAi(kind, content, context) {
   openAiPanel();
   hideTransPop(); // 跳转 AI 窗即关闭翻译框，任何入口都生效
-  // 不区分单词/句子，统一前缀；引号仅用于界定被讲解的内容
-  const prompt = '请为我讲解“' + content + '”';
+  const ctx = String(context || '').replace(/\s+/g, ' ').trim();
+  // 单词讲解带上所在段落，避免 being promoted 这类词被猜成“晋升”
+  const prompt = ctx
+    ? '请为我讲解“' + content + '”。它所在的原文是：“' + ctx.slice(0, 600) + '”。请结合原文语境讲解，不要脱离上下文。'
+    : '请为我讲解“' + content + '”';
   // 讲解为预设自动发送，与输入框无关：无条件清空，避免残留追问/未发送的草稿
   aiInput.value = '';
   aiInput.style.height = 'auto';
@@ -2856,6 +2877,7 @@ document.addEventListener('mouseup', ev => {
       }
       const lk = lookupWord(hit.raw, hit.sec, hit.blk);
       if (!lk) { bubbleWord = null; return; }
+      lk.context = hit.context;
       bubbleWord = key;
       showBubbleAt(lk, hit.rect);
     } else {
