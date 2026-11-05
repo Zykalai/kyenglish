@@ -79,6 +79,7 @@ CI 不依赖 spaCy/ECDICT，不需要 66MB 原始词典；它验证的是已提�
 ## 网络配置
 
 - **AI 窗口**：默认走已部署的 Pages 代理 `https://kyenglish-ai-proxy.pages.dev`；Pages Functions 在 Cloudflare 内部再转发到 Worker，浏览器不需要访问 `workers.dev`。Ark Key 仍只存在 Worker 服务端。
+- **划句翻译**：独立豆包翻译通道，走 Pages `/translate` → 方舟 Responses API；每次只发当前句子，不带聊天历史，也不做上下文判断。
 - **回退**：如果 Pages 不可用，可在页面加载前设置：
 
 ```js

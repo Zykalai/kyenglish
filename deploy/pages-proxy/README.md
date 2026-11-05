@@ -8,7 +8,7 @@
 浏览器 → https://kyenglish-ai-proxy.pages.dev → 现有 Worker → 火山方舟
 ```
 
-`workers.dev` 在浏览器侧被挡，但 Cloudflare 内部的 Pages Functions 可以访问现有 Worker；Ark Key 仍然只存在 Worker 里，Pages 项目**不需要任何 Secret**。
+`workers.dev` 在浏览器侧被挡，但 Cloudflare 内部的 Pages Functions 可以访问现有 Worker；AI 聊天的 Ark Key 仍然只存在 Worker 里。划句翻译是另一条独立通道，只需要一个 Pages Secret（见下文）。
 
 ## 部署（Wrangler，推荐）
 
@@ -27,9 +27,26 @@ npx wrangler pages deploy deploy/pages-proxy --project-name ky-ai-proxy --branch
 1. Cloudflare Dashboard → Workers & Pages → Create → Pages → **Upload assets**。
 2. 项目名填 `ky-ai-proxy`，把 `deploy/pages-proxy/` 整个上传。
 3. 部署后得到 `https://<project>.pages.dev`。
-4. 不需要配置任何环境变量。
+4. AI 聊天不需要额外变量；划句翻译需要配置下面的 `ARK_TRANSLATE_API_KEY`。
 
 如果网页上传不识别 `_worker.js`（Pages 高级模式），用上面的 Wrangler 命令。
+
+## 划句翻译接口
+
+Pages 还提供独立的 `POST /translate`：
+
+- 请求：`{ "text": "要翻译的英文句子" }`
+- 服务端调用方舟 Responses API 的 `doubao-seed-translation` 模型；
+- 只发当前文本，不带聊天历史，不做上下文判断；
+- 返回：`{ "translation": "中文译文" }`。
+
+需要在 Pages 项目里额外配置一个 Secret：
+
+```powershell
+npx wrangler pages secret put ARK_TRANSLATE_API_KEY --project-name kyenglish-ai-proxy
+```
+
+`ARK_TRANSLATE_ENDPOINT` 可选，默认是项目里的翻译接入点。Key 不要写进代码。
 
 ## 前端接入
 
@@ -47,6 +64,7 @@ location.reload();
 ```powershell
 curl.exe -i https://kyenglish-ai-proxy.pages.dev/
 curl.exe -i -X OPTIONS https://kyenglish-ai-proxy.pages.dev/chat/completions -H "Origin: https://ab123666.github.io"
+curl.exe -i -X POST https://kyenglish-ai-proxy.pages.dev/translate -H "Content-Type: application/json" -H "Origin: https://ab123666.github.io" --data "{\"text\":\"Trains have become the preferred means of travel.\"}"
 ```
 
 预期：`/` 返回 `{"ok":true,...}`；`OPTIONS` 返回 `204`，并带 `Access-Control-Allow-Origin`。
