@@ -7,7 +7,8 @@
 ```powershell
 python tools/lexicon/download_ecdict.py   # 首次：下载并校验 ECDICT
 python tools/lexicon/build_dict.py        # 生成 data/dict-parts/<两个字母>.js
-python tools/assemble.py                  # 只把真题和 JS 组装进 index.html
+python tools/lexicon/build_paper_cards.py # 预计算卷面词卡片 data/paper-cards.json
+python tools/assemble.py                  # 把真题、卷面卡片和 JS 组装进 index.html
 python tools/lexicon/verify.py            # 端到端检查
 ```
 

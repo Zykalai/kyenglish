@@ -47,6 +47,9 @@ const TRANSLATE_BASE_URL = (
   'https://kyenglish-ai-proxy.pages.dev'
 ).replace(/\/+$/, '');
 
+/* 卷面词提前算好完整卡片（直接释义 + 原形区块），点击不再读词典文件。 */
+const PAPER_CARDS = (typeof PAPER_CARDS_DATA !== 'undefined' && PAPER_CARDS_DATA) || {};
+
 /* 直接词典：按单词前两个字母懒加载 ECDICT 原词条。
    不预生成词形，不做 spaCy 还原；词形注释在卡片里再查原形。
    用 <script> 而不是 fetch：本地 file:// 打开也能加载，GitHub Pages 也能缓存。 */
@@ -317,7 +320,7 @@ function wordAtPoint(x, y) {
   const sec = secEl ? secEl.id.replace(/^sec-/, '') : 'head';
   const blkEl = hostEl.closest('[data-blk]');
   const blk = blkEl ? blkEl.getAttribute('data-blk') : null;
-  return { raw, rect, sec, blk };
+  return { raw, rect, sec, blk, paper: !!staticHost };
 }
 
 function wordFromInput(el) {
@@ -386,6 +389,14 @@ function showDictBubble(hit) {
   const key = surface || String(hit.raw).toLowerCase();
   bubbleWord = key;
   const rect = hit.rect;
+  const cached = hit.paper ? PAPER_CARDS[surface] : null;
+  if (cached) {
+    showBubbleAt({
+      key, lemma: key, entry: cached.entry,
+      baseSections: Array.isArray(cached.baseSections) ? cached.baseSections : []
+    }, rect);
+    return;
+  }
   bubble.style.display = 'block';
   bubble.innerHTML = '<div class="wb-loading">词典加载中…</div>';
   positionPop(bubble, rect);
