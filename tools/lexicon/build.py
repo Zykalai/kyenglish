@@ -73,6 +73,12 @@ POS_MAP = {
 }
 POS_LINE_RE = re.compile(r"^([a-zA-Z]+)\.\s*(.*)$")
 DOMAIN_RE = re.compile(r"^\[[^\]]+\]\s*")
+FORM_NOTE = re.compile(
+    r"^\s*([A-Za-z][A-Za-z'-]*)\s*的\s*"
+    r"(?:过去式|过去分词|现在分词|现在式|现在式第三人称单数?|复数|"
+    r"第三人称单数|比较级|最高级|缩写|变形|形式)"
+    r"(?:\s*和\s*(?:过去式|过去分词))?\s*[。.]?\s*$"
+)
 
 
 def paras(text):
@@ -418,6 +424,25 @@ def main():
             return alt, "surface"
         return s, "surface"
 
+    def effective_lemma(lemma):
+        """Follow ECDICT's bare inflection notes to the base lemma."""
+        seen = set()
+        while lemma and lemma not in seen:
+            seen.add(lemma)
+            if lemma in extras or lemma.lower() in extras_lc:
+                return lemma
+            row = ecdict.get(lemma.lower())
+            if not row:
+                return lemma
+            m = FORM_NOTE.match((row.get("translation") or "").strip())
+            if not m:
+                return lemma
+            base = m.group(1).lower()
+            if base == lemma or (base not in ecdict and base not in extras_lc):
+                return lemma
+            lemma = base
+        return lemma
+
     global_map = {}
     kinds = {}
     for s in sorted(surfaces, key=lambda x: (x.lower(), x)):
@@ -449,6 +474,11 @@ def main():
         if alt != s and alt not in global_map:
             global_map[alt] = global_map[s]
             kinds[alt] = kinds[s]
+
+    # ECDICT may use a bare form note as the only definition
+    # (unspoken -> unspeak的过去分词). Point the surface at the base lemma.
+    for s in list(global_map):
+        global_map[s] = effective_lemma(global_map[s])
 
     # section/block overrides ------------------------------------------------
     # Explicit AI decisions win. For surfaces the AI did not review, spaCy's
@@ -494,6 +524,16 @@ def main():
                      or global_map.get(surface) or global_map.get(surface.lower()))
         if sec_lemma and lemma.lower() != sec_lemma.lower():
             block_map[year].setdefault(sec, {}).setdefault(bid, {})[surface] = lemma
+
+    for secs in section_map.values():
+        for m in secs.values():
+            for s in list(m):
+                m[s] = effective_lemma(m[s])
+    for secs in block_map.values():
+        for blks in secs.values():
+            for m in blks.values():
+                for s in list(m):
+                    m[s] = effective_lemma(m[s])
 
     # lexicon entries -----------------------------------------------------
     lemmas = set(global_map.values())

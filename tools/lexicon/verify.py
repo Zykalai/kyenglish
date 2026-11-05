@@ -142,6 +142,12 @@ with sync_playwright() as p:
         r = page.evaluate("([blk]) => { const x = lookupWord('left','newtype',blk); return x && x.lemma; }", [blk])
         check(f"2026 left {blk} -> {expected}", r == expected, r)
 
+    page.goto(URL + "#/2025/reading4")
+    page.wait_for_timeout(400)
+    for word, expected in [("unspoken", "unspeak"), ("trodden", "tread")]:
+        r = page.evaluate("([w]) => { const x = lookupWord(w,'reading4',null); return x && x.lemma; }", [word])
+        check(f"2025 {word} -> {expected}", r == expected, r)
+
     # paper word -> static bubble; AI / favorites -> live precomputed bubble
     page.goto(URL + "#/2025/reading1")
     page.wait_for_timeout(700)
