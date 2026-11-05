@@ -12,6 +12,7 @@ import collections
 import csv
 import json
 import os
+import re
 
 from lemminflect import getAllInflections
 
@@ -19,6 +20,15 @@ BASE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 ECDICT = os.path.join(BASE, "data", "dict", "ecdict.csv")
 LEXICON = os.path.join(BASE, "data", "lexicon", "lexicon.json")
 OUTDIR = os.path.join(BASE, "data", "live-dict")
+
+# ECDICT sometimes stores a bare inflection note as the whole definition,
+# e.g. unspoken = "unspeak的过去分词". Follow the note to the base lemma.
+FORM_NOTE = re.compile(
+    r"^\s*([A-Za-z][A-Za-z'-]*)\s*的\s*"
+    r"(?:过去式|过去分词|现在分词|现在式|现在式第三人称单数?|复数|"
+    r"第三人称单数|比较级|最高级|缩写|变形|形式)"
+    r"(?:\s*和\s*(?:过去式|过去分词))?\s*[。.]?\s*$"
+)
 
 
 def rank(row):
@@ -60,6 +70,34 @@ def main():
             rows[word] = {"word": word, "translation": meaning,
                           "phonetic": phonetic, "frq": "0", "bnc": "0"}
 
+    # Pull in base lemmas that selected forms point at, even when the base is
+    # outside the high-frequency subset (unspoken -> unspeak, went -> go).
+    extra_base = {}
+    bases = set()
+    for word, row in rows.items():
+        translation = (row.get("translation") or "").strip()
+        match = FORM_NOTE.match(translation)
+        if match:
+            base = match.group(1).lower()
+            if base != word:
+                extra_base[word] = base
+                if base not in rows:
+                    bases.add(base)
+        for part in (row.get("exchange") or "").split("/"):
+            if part.startswith("0:"):
+                base = part[2:].strip().lower()
+                if base and base != word:
+                    extra_base.setdefault(word, base)
+                    if base not in rows:
+                        bases.add(base)
+    if bases:
+        with open(ECDICT, encoding="utf-8", errors="replace", newline="") as f:
+            for row in csv.DictReader(f):
+                word = (row.get("word") or "").strip().lower()
+                if word in bases and word not in rows:
+                    if (row.get("translation") or "").strip():
+                        rows[word] = row
+
     forms = collections.defaultdict(set)
     entries = {}
     for word, row in rows.items():
@@ -84,6 +122,8 @@ def main():
             value = value.strip().lower()
             if key != "0" and value.isalpha():
                 forms[value].add(word)
+        if word in extra_base:
+            forms[word].add(extra_base[word])
 
     ranked = {}
     for surface, lemmas in forms.items():

@@ -188,6 +188,11 @@ with sync_playwright() as p:
     txt = page.eval_on_selector("#wordBubble", "el => el.innerText")
     check("收藏句子点词弹出实时卡片", disp == "block" and "favorite" in txt.lower(), txt[:80].replace("\n", " | "))
 
+    page.evaluate("loadLiveDict('u')")
+    page.wait_for_function("window.__LIVE_DICT_PARTS__ && window.__LIVE_DICT_PARTS__.u", timeout=30000)
+    r = page.evaluate("() => liveCandidates(window.__LIVE_DICT_PARTS__.u, 'unspoken').map(x => x.lemma).join(',')")
+    check("词形注释 unspoken -> unspeak", r == "unspeak", r)
+
     browser.close()
 
 failed = [r for r in results if not r[1]]

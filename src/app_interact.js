@@ -363,15 +363,38 @@ function normalizeLiveWord(raw) {
   return w;
 }
 
+function formBaseFromNote(entry) {
+  if (!entry || !entry[0]) return null;
+  const lines = String(entry[0])
+    .replace(/\\r/g, '\n')
+    .replace(/\\n/g, '\n')
+    .split('\n')
+    .map(stripDomainSense)
+    .filter(Boolean);
+  if (lines.length !== 1) return null;
+  const m = lines[0].match(/^([A-Za-z][A-Za-z'-]*)\s*的\s*(?:过去式|过去分词|现在分词|现在式|现在式第三人称单数?|复数|第三人称单数|比较级|最高级|缩写|变形|形式)(?:\s*和\s*(?:过去式|过去分词))?\s*[。.]?$/);
+  return m ? m[1].toLowerCase() : null;
+}
+
 function liveCandidates(dict, raw) {
   const w = normalizeLiveWord(raw);
   if (!w) return [];
   const lemmas = Array.isArray(dict.forms[w]) ? dict.forms[w].slice() : [];
   if (dict.entries[w] && !lemmas.includes(w)) lemmas.unshift(w);
   const out = [];
+  const seen = new Set();
   for (const lemma of lemmas) {
-    const entry = dict.entries[lemma];
-    if (entry) out.push({ lemma, entry });
+    let target = lemma;
+    let entry = dict.entries[lemma];
+    const base = formBaseFromNote(entry);
+    if (base && base !== lemma && dict.entries[base]) {
+      target = base;
+      entry = dict.entries[base];
+    }
+    if (entry && !seen.has(target)) {
+      out.push({ lemma: target, entry });
+      seen.add(target);
+    }
   }
   return out;
 }
