@@ -663,17 +663,31 @@ function hideTransPop() { transPop.style.display = 'none'; }
 function positionTransPop() {
   const rect = currentSel ? currentSel.rect : null;
   const vw = document.documentElement.clientWidth;
+  const vh = document.documentElement.clientHeight;
   const sx = window.scrollX, sy = window.scrollY;
-  const w = Math.max(260, Math.min(rect ? rect.width : 320, 520));
+  const gap = 8;
+  const w = Math.max(180, Math.min(rect ? rect.width : 320, 520, vw - 20));
   transPop.style.width = w + 'px';
   const h = transPop.offsetHeight;
   const left = Math.max(10, Math.min(rect ? rect.left : 10, vw - w - 10));
-  let top = (rect ? rect.bottom + 10 : 10);
-  if (top + h > document.documentElement.clientHeight - 20) {
-    top = rect ? rect.top - h - 10 : 10;
+  // 划句工具条也在选区下方，翻译框必须避开它，不能两层叠在一起。
+  const bar = favBar && favBar.style.display !== 'none'
+    ? favBar.getBoundingClientRect() : null;
+  const overlapsBar = top => !!bar &&
+    left < bar.right - 2 && left + w > bar.left + 2 &&
+    top < bar.bottom - 2 && top + h > bar.top + 2;
+  const candidates = [];
+  if (rect) candidates.push(rect.bottom + gap);
+  if (bar) candidates.push(bar.bottom + gap);
+  if (rect) candidates.push(rect.top - h - gap);
+  if (bar) candidates.push(bar.top - h - gap);
+  candidates.push(10);
+  let top = candidates.find(t => t >= 10 && t + h <= vh - 10 && !overlapsBar(t));
+  if (top == null) {
+    top = Math.max(10, Math.min(vh - h - 10, rect ? rect.bottom + gap : 10));
   }
   transPop.style.left = (left + sx) + 'px';
-  transPop.style.top = (Math.max(10, top) + sy) + 'px';
+  transPop.style.top = (top + sy) + 'px';
 }
 
 function translateSentence(text) {
