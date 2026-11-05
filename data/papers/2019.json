@@ -1,0 +1,449 @@
+{
+ "year": 2019,
+ "sources": [
+  "https://www.hqwx.com/mba-kaoshi/news/15530613906221.html",
+  "https://kaoyan.eol.cn/shiti/yingyu/201812/t20181224_1638466.shtml",
+  "http://file.xdf.cn/uploads/181223/182_181223171103y9JWm3lzlgPOr6Lz.pdf"
+ ],
+ "notes": "主来源：环球网校文字完整版；选项顺序与完形答案交叉核对中国教育在线(文都)及新东方答案PDF。eol版完形选项字母排序与hqwx版错位，经新东方答案PDF逐题比对(如1=However在C、2=helps在D、11=track在A)，采用hqwx版选项顺序。hqwx第11题A项OCR误作trash，据eol/新东方订正为track。阅读答案来源页未逐题给出，故省略answer字段。大作文图表数据据新东方在线/启航考研范文确认。",
+ "missing": [],
+ "cloze": {
+  "instruction": "Read the following text. Choose the best word (s) for each numbered blank and mark A, B, C or D on the ANSWER SHEET. (10 points)",
+  "passage": "Weighing yourself regularly is a wonderful way to stay aware of any significant weight fluctuations. {{1}}, when done too often, this habit can sometimes hurt more than it {{2}}.\n\nAs for me, weighing myself every day caused me to shift my focus from being generally healthy and physically active to focusing {{3}} on the scale. That was counterproductive to my overall fitness goals. I had gained weight in the form of muscle mass, but thinking only of {{4}} the number on the scale, I altered my training program. That conflicted with how I needed to train to {{5}} my goals.\n\nI also found that weighing myself daily did not provide an accurate {{6}} of the hard work and progress I was making in the gym. It takes about three weeks to a month to notice any significant changes in your weight {{7}} altering your training program. The most {{8}} changes will be observed in skill level, strength and inches lost.\n\nFor these {{9}}, I stopped weighing myself every day and switched to a bimonthly weighing schedule {{10}}. Since weight loss is not my goal, it is less important for me to {{11}} my weight each week. Weighing every other week allows me to observe and {{12}} any significant weight changes. That tells me whether I need to {{13}} my training program.\n\nI use my bimonthly weigh-in {{14}} to get information about my nutrition as well. If my training intensity remains the same, but I'm constantly {{15}} and dropping weight, this is a {{16}} that I need to increase my daily caloric intake.\n\nThe {{17}} to stop weighing myself every day has done wonders for my overall health, fitness and well-being. I'm experiencing increased zeal for working out since I no longer carry the burden of a {{18}} morning weigh-in. I've also experienced greater success in achieving my specific fitness goals, {{19}} I'm training according to those goals, not the numbers on a scale.\n\nRather than {{20}} over the scale, turn your focus to how you look, feel how your clothes fit and your overall energy level.",
+  "questions": [
+   {
+    "no": 1,
+    "A": "Therefore",
+    "B": "Otherwise",
+    "C": "However",
+    "D": "Besides",
+    "answer": "C"
+   },
+   {
+    "no": 2,
+    "A": "cares",
+    "B": "warns",
+    "C": "reduces",
+    "D": "helps",
+    "answer": "D"
+   },
+   {
+    "no": 3,
+    "A": "solely",
+    "B": "occasionally",
+    "C": "formally",
+    "D": "initially",
+    "answer": "A"
+   },
+   {
+    "no": 4,
+    "A": "lowering",
+    "B": "explaining",
+    "C": "accepting",
+    "D": "recording",
+    "answer": "A"
+   },
+   {
+    "no": 5,
+    "A": "set",
+    "B": "review",
+    "C": "reach",
+    "D": "modify",
+    "answer": "C"
+   },
+   {
+    "no": 6,
+    "A": "depiction",
+    "B": "distribution",
+    "C": "prediction",
+    "D": "definition",
+    "answer": "A"
+   },
+   {
+    "no": 7,
+    "A": "regardless of",
+    "B": "aside from",
+    "C": "along with",
+    "D": "due to",
+    "answer": "D"
+   },
+   {
+    "no": 8,
+    "A": "rigid",
+    "B": "precise",
+    "C": "immediate",
+    "D": "orderly",
+    "answer": "C"
+   },
+   {
+    "no": 9,
+    "A": "judgements",
+    "B": "reasons",
+    "C": "methods",
+    "D": "claims",
+    "answer": "B"
+   },
+   {
+    "no": 10,
+    "A": "though",
+    "B": "again",
+    "C": "indeed",
+    "D": "instead",
+    "answer": "D"
+   },
+   {
+    "no": 11,
+    "A": "track",
+    "B": "overlook",
+    "C": "conceal",
+    "D": "report",
+    "answer": "A"
+   },
+   {
+    "no": 12,
+    "A": "approve of",
+    "B": "hold onto",
+    "C": "account for",
+    "D": "depend on",
+    "answer": "C"
+   },
+   {
+    "no": 13,
+    "A": "share",
+    "B": "adjust",
+    "C": "confirm",
+    "D": "prepare",
+    "answer": "B"
+   },
+   {
+    "no": 14,
+    "A": "features",
+    "B": "rules",
+    "C": "tests",
+    "D": "results",
+    "answer": "D"
+   },
+   {
+    "no": 15,
+    "A": "anxious",
+    "B": "hungry",
+    "C": "sick",
+    "D": "bored",
+    "answer": "B"
+   },
+   {
+    "no": 16,
+    "A": "secret",
+    "B": "belief",
+    "C": "sign",
+    "D": "principle",
+    "answer": "C"
+   },
+   {
+    "no": 17,
+    "A": "necessity",
+    "B": "decision",
+    "C": "wish",
+    "D": "request",
+    "answer": "B"
+   },
+   {
+    "no": 18,
+    "A": "surprising",
+    "B": "restricting",
+    "C": "consuming",
+    "D": "disappointing",
+    "answer": "D"
+   },
+   {
+    "no": 19,
+    "A": "because",
+    "B": "unless",
+    "C": "until",
+    "D": "if",
+    "answer": "A"
+   },
+   {
+    "no": 20,
+    "A": "dominating",
+    "B": "puzzling",
+    "C": "triumphing",
+    "D": "obsessing",
+    "answer": "D"
+   }
+  ],
+  "fills": {
+   "1": "However",
+   "2": "helps",
+   "3": "solely",
+   "4": "lowering",
+   "5": "reach",
+   "6": "depiction",
+   "7": "due to",
+   "8": "immediate",
+   "9": "reasons",
+   "10": "instead",
+   "11": "track",
+   "12": "account for",
+   "13": "adjust",
+   "14": "results",
+   "15": "hungry",
+   "16": "sign",
+   "17": "decision",
+   "18": "disappointing",
+   "19": "because",
+   "20": "obsessing"
+  }
+ },
+ "reading": [
+  {
+   "name": "Text 1",
+   "instruction": "Read the following four texts. Answer the questions below each text by choosing A, B, C or D. Mark your answer on the ANSWER SHEET. (40 points)",
+   "passage": "Unlike so-called basic emotions such as sadness, fear, and anger, guilt emerges a little later, in conjunction with a child's growing grasp of social and moral norms. Children aren't born knowing how to say \"I'm sorry\"; rather, they learn over time that such statements appease parents and friends—and their own consciences. This is why researchers generally regard so-called moral guilt, in the right amount, to be a good thing: A child who claims responsibility for knocking over a tower and tries to rebuild it is engaging in behavior that's not only reparative but also pro-social.\n\nIn the popular imagination, of course, guilt still gets a bad rap. It evokes Freud's ideas and religious hang-ups. More important, guilt is deeply uncomfortable—it's the emotional equivalent of wearing a jacket weighted with stones. Who would inflict it upon a child? Yet this understanding is outdated. \"There has been a kind of revival or a rethinking about what guilt is and what role guilt can serve,\" Vaish says, adding that this revival is part of a larger recognition that emotions aren't binary—feelings that may be advantageous in one context may be harmful in another. Jealousy and anger, for example, may have evolved to alert us to important inequalities. Too much happiness (think mania) can be destructive.\n\nAnd guilt, by prompting us to think more deeply about our goodness, can encourage humans to atone for errors and fix relationships. Guilt, in other words, can help hold a cooperative species together. It is a kind of social glue.\n\nViewed in this light, guilt is an opportunity. Work by Tina Malti, a psychology professor at the University of Toronto, suggests that guilt may compensate for an emotional deficiency. In a number of studies, Malti and others have shown that guilt and sympathy (and its close cousin empathy) may represent different pathways to cooperation and sharing. Some kids who are low in sympathy may make up for that shortfall by experiencing more guilt, which can rein in their nastier impulses. And vice versa: High sympathy can substitute for low guilt.\n\nIn a 2014 study, for example, Malti and a colleague looked at 244 children, ages 4, 8, and 12. Using caregiver assessments and the children's self-observations, they rated each child's overall sympathy level and his or her tendency to feel negative emotions (like guilt and sadness) after moral transgressions. Then the kids were handed stickers and chocolate coins, and given a chance to share them with an anonymous child. For the low-sympathy kids, how much they shared appeared to turn on how inclined they were to feel guilty. The guilt-prone ones shared more, even though they hadn't magically become more sympathetic to the other child's deprivation.",
+   "questions": [
+    {
+     "no": 21,
+     "stem": "Researchers think that guilt can be a good thing because it may help",
+     "A": "regulate a child's basic emotions",
+     "B": "improve a child's intellectual ability",
+     "C": "intensify a child's positive feelings",
+     "D": "foster child's moral development"
+    },
+    {
+     "no": 22,
+     "stem": "According to Paragraph 2, many people still think guilt to be",
+     "A": "deceptive",
+     "B": "addictive",
+     "C": "burdensome",
+     "D": "inexcusable"
+    },
+    {
+     "no": 23,
+     "stem": "Vaish holds that the rethinking about guilt comes from an awareness that",
+     "A": "an emotion can play opposing roles",
+     "B": "emotions are socially constructive",
+     "C": "emotional stability can benefit health",
+     "D": "emotions are context-independent"
+    },
+    {
+     "no": 24,
+     "stem": "Malti and others have shown that cooperation and sharing",
+     "A": "may help correct emotional deficiencies",
+     "B": "can bring about emotional satisfaction",
+     "C": "can result from either sympathy or guilt",
+     "D": "may be the outcome of impulsive acts"
+    },
+    {
+     "no": 25,
+     "stem": "The word \"transgressions\" (line 4, para 5) is closest in meaning to",
+     "A": "wrongdoings",
+     "B": "discussions",
+     "C": "restrictions",
+     "D": "teachings"
+    }
+   ]
+  },
+  {
+   "name": "Text 2",
+   "instruction": "",
+   "passage": "Forests give us shade, quiet and one of the harder challenges in the fight against climate change. Even as we humans count on forests to soak up a good share of the carbon dioxide we produce, we are threatening their ability to do so. The climate change we are hastening could one day leave us with forests that emit more carbon than they absorb.\n\nThankfully, there is a way out of this trap—but it involves striking a subtle balance. Helping forests flourish as valuable \"carbon sinks\" long into the future may require reducing their capacity to sequester carbon now. California is leading the way, as it does on so many climate efforts, in figuring out the details.\n\nThe state's proposed Forest Carbon Plan aims to double efforts to thin out young trees and clear brush in parts of the forest, including by controlled burning. This temporarily lowers carbon-carrying capacity. But the remaining trees draw a greater share of the available moisture, so they grow and thrive, restoring the forest's capacity to pull carbon from the air. Healthy trees are also better able to fend off bark beetles. The landscape is rendered less combustible. Even in the event of a fire, fewer trees are consumed.\n\nThe need for such planning is increasingly urgent. Already, since 2010, drought and beetles have killed more than 100 million trees in California, most of them in 2016 alone, and wildfires have scorched hundreds of thousands of acres.\n\nCalifornia's plan envisions treating 35,000 acres of forest a year by 2020, and 60,000 by 2030—financed from the proceeds of the state's emissions-permit auctions. That's only a small share of the total acreage that could benefit, an estimated half a million acres in all, so it will be important to prioritize areas at greatest risk of fire or drought.\n\nThe strategy also aims to ensure that carbon in woody material removed from the forests is locked away in the form of solid lumber, burned as biofuel in vehicles that would otherwise run on fossil fuels, or used in compost or animal feed. New research on transportation biofuels is under way, and the state plans to encourage lumber production close to forest lands. In future the state proposes to take an inventory of its forests' carbon-storing capacity every five years.\n\nState governments are well accustomed to managing forests, including those owned by the U.S. Forest Service, but traditionally they've focused on wildlife, watersheds and opportunities for recreation. Only recently have they come to see the vital part forests will have to play in storing carbon. California's plan, which is expected to be finalized by the governor early next year, should serve as a model.",
+   "questions": [
+    {
+     "no": 26,
+     "stem": "By saying \"one of the harder challenges\" the author implies that",
+     "A": "forests may become a potential threat",
+     "B": "people may misunderstand global warming",
+     "C": "extreme weather conditions may arise",
+     "D": "global climate change may get out of control"
+    },
+    {
+     "no": 27,
+     "stem": "To maintain forests as valuable carbon sinks, we may need to",
+     "A": "lower their present carbon-absorbing capacity",
+     "B": "strike a balance among different plants",
+     "C": "accelerate the growth of young trees",
+     "D": "preserve the diversity of species in them"
+    },
+    {
+     "no": 28,
+     "stem": "California's Forest Carbon Plan endeavors to",
+     "A": "cultivate more drought-resistant trees",
+     "B": "find more effective ways to kill insects",
+     "C": "reduce the density of some of its forests",
+     "D": "restore its forests quickly after wildfires"
+    },
+    {
+     "no": 29,
+     "stem": "What is essential to California's plan according to paragraph 5?",
+     "A": "To carry it out before the year of 2020",
+     "B": "To handle the areas in serious danger first",
+     "C": "To perfect the emissions-permit auctions",
+     "D": "To obtain enough financial support"
+    },
+    {
+     "no": 30,
+     "stem": "The author's attitude to California's plan can best be described as",
+     "A": "ambiguous",
+     "B": "tolerant",
+     "C": "cautious",
+     "D": "supportive"
+    }
+   ]
+  },
+  {
+   "name": "Text 3",
+   "instruction": "",
+   "passage": "American farmers have been complaining of labor shortages for several years now. The complaints are unlikely to stop without an overhaul of immigration rules for farm workers. Efforts to create a more straightforward agricultural-workers visa that would enable foreign workers to stay longer in the U.S. and change jobs within the industry have so far failed in Congress. If this doesn't change, American businesses, communities and consumers will be the losers.\n\nPerhaps half of U.S. farm laborers are undocumented immigrants. As fewer such workers enter the U.S., the characteristics of the agricultural workforce are changing. Today's farm laborers, while still predominantly born in Mexico, are more likely to be settled rather than migrating, and more likely to be married than single. They are also aging. At the start of this century, about one-third of crop workers were over the age of 35. Now, more than half are. And crop picking is hard on older bodies.\n\nOne oft-debated cure for this labor shortage remains as implausible as it has been all along: Native U.S. workers won't be returning to the farm.\n\nMechanization is not the answer either—not yet at least. Production of corn, cotton, rice, soybeans and wheat has been largely mechanized, but many high-value, labor-intensive crops, such as strawberries, need labor. Even dairy farms, where robots currently do only a small share of milking, have a long way to go before they are automated.\n\nAs a result, farms have grown increasingly reliant on temporary guest workers using the H-2A visa to fill the gaps in the agricultural workforce. Starting around 2012, requests for the visas rose sharply: from 2011 to 2016 the number of visas issued more than doubled.\n\nThe H-2A visa has no numerical cap, unlike the H-2B visa for nonagricultural work, which is limited to 66,000 annually. Even so, employers frequently complain that they aren't allotted all the workers they need. The process is cumbersome, expensive and unreliable. One survey found that bureaucratic delays led H-2A workers to arrive on the job an average of 22 days late. And the shortage is compounded by federal immigration raids, which remove some workers and drive others underground.\n\nIn effect, the U.S. can import food or it can import the workers who pick it. The U.S. needs a simpler, streamlined, multi-year visa for agricultural workers, accompanied by measures to guard against exploitation and a viable path to U.S. residency for workers who meet the requirements. Otherwise growers will continue to struggle with shortages and uncertainty, and the country as a whole will lose out.",
+   "questions": [
+    {
+     "no": 31,
+     "stem": "What problem should be addressed according to the first two paragraphs?",
+     "A": "Discrimination against foreign workers in the U.S.",
+     "B": "Biased laws in favor of some American businesses",
+     "C": "Flaws in U.S. immigration rules for farm workers",
+     "D": "Decline of job opportunities in U.S. agriculture"
+    },
+    {
+     "no": 32,
+     "stem": "One trouble with U.S. agricultural workforce is",
+     "A": "the rising number of illegal immigrants",
+     "B": "the high mobility of crop workers",
+     "C": "the lack of experienced laborers",
+     "D": "the aging of immigrant farm workers"
+    },
+    {
+     "no": 33,
+     "stem": "What is the much-argued solution to the labor shortage in U.S. farming?",
+     "A": "To attract younger laborers to farm work",
+     "B": "To get native U.S. workers back farming",
+     "C": "To use more robots to grow high-value crops",
+     "D": "To strengthen financial support for farmers"
+    },
+    {
+     "no": 34,
+     "stem": "Agricultural employers complain about the H-2A visa for its",
+     "A": "slow granting procedures",
+     "B": "limit on duration of stay",
+     "C": "tightened requirements",
+     "D": "control of annual admissions"
+    },
+    {
+     "no": 35,
+     "stem": "Which of the following could be the best title for this text?",
+     "A": "U.S. Agriculture in Decline",
+     "B": "Import Food or Labor?",
+     "C": "America Saved by Mexico?",
+     "D": "Manpower vs. Automation"
+    }
+   ]
+  },
+  {
+   "name": "Text 4",
+   "instruction": "",
+   "passage": "Arnold Schwarzenegger, Dia Mirza and Adrian Grenier have a message for you: It's easy to beat plastic. They're part of a bunch of celebrities starring in a new video for World Environment Day—encouraging you, the consumer, to swap out your single-use plastic staples to combat the plastic crisis.\n\nMy biggest concern with leaving it up to the individual, however, is our limited sense of what needs to be achieved. On their own, taking our own bags to the grocery store or quitting plastic straws, for example, will accomplish little and require very little of us. They could even be detrimental, satisfying a need to have \"done our bit\" without ever progressing onto bigger, bolder, more effective actions—a kind of \"moral licensing\" that allays our concerns and stops us doing more and asking more of those in charge.\n\nWhile the conversation around our environment and our responsibility toward it remains centered on shopping bags and straws, we're ignoring the balance of power that implies that as \"consumers\" we must shop sustainably, rather than as \"citizens\" hold our governments and industries to account to push for real systemic change. Nowhere in World Environment Day 2018's key messages is there anything about voting for environmentally progressive politicians, for example. Why not?\n\nIt's important to acknowledge that the environment isn't everyone's priority—or even most people's. We shouldn't expect it to be. In her latest book, Why Good People Do Bad Environmental Things, Wellesley College professor Elizabeth R. De Sombre argues that the best way to collectively change the behavior of large numbers of people is for the change to be structural.\n\nThis might mean implementing policy such as a plastic tax that adds a cost to environmentally problematic action, or banning single-use plastics altogether. India has just announced it will eliminate all single-use plastic in the country by 2022. There are also incentive-based ways of making better environmental choices easier, such as ensuring recycling is at least as easy as trash disposal.\n\nDe Sombre isn't saying people should stop caring about the environment. It's just that individual actions are too slow, she says, for that to be the only, or even primary, approach to changing widespread behavior.\n\nNone of this is about writing off the individual. It's just about putting things into perspective. We don't have time to wait. We need progressive policies that shape collective action (and rein in polluting business), alongside engaged citizens pushing for change. That's not something we can buy.",
+   "questions": [
+    {
+     "no": 36,
+     "stem": "Some celebrities star in a new video to",
+     "A": "demand new laws on the use of plastics",
+     "B": "urge consumers to cut the use of plastics",
+     "C": "invite public opinion on the plastics crisis",
+     "D": "disclose the causes of the plastics crisis"
+    },
+    {
+     "no": 37,
+     "stem": "The author is concerned that \"moral licensing\" may",
+     "A": "mislead us into doing worthless things",
+     "B": "prevent us from making further efforts",
+     "C": "weaken our sense of accomplishment",
+     "D": "suppress our desire for success"
+    },
+    {
+     "no": 38,
+     "stem": "By pointing out our identity as \"citizens,\" the author indicates that",
+     "A": "our focus should be shifted to community welfare",
+     "B": "our relationship with local industries is improving",
+     "C": "we have been actively exercising our civil rights",
+     "D": "we should press our governments to lead the combat"
+    },
+    {
+     "no": 39,
+     "stem": "De Sombre argues that the best way for a collective change should be",
+     "A": "a win-win arrangement",
+     "B": "a self-driven mechanism",
+     "C": "a cost-effective approach",
+     "D": "a top down process"
+    },
+    {
+     "no": 40,
+     "stem": "The author concludes that individual efforts",
+     "A": "can be too aggressive",
+     "B": "are far from sufficient",
+     "C": "can be too inconsistent",
+     "D": "are far from rational"
+    }
+   ]
+  }
+ ],
+ "newtype": {
+  "form": "matching",
+  "instruction": "You are going to read a list of headings and a text; choose the most suitable heading from the list A-G for each numbered paragraph (41-45). There are two extra choices in the right column. Mark your answers on the ANSWER SHEET. (10 points)",
+  "passage": "How seriously should parents take kids' opinions when searching for a home?\n\nIn choosing a new home, Camille McClain's kids have a single demand: a backyard. That seemingly reasonable request turned the Chicago family's home hunt upside down, as there weren't many three-bedroom apartments on the North Side—where the family was looking—that came with yard space. Still, McClain and her husband chose to honor their 4- and 6-year-olds' request.\n\n\"We worked with a few apartment brokers, and it was strange that many of them didn't even know if there was outdoor space, so they'd bring us to an apartment, we'd see that it didn't have a yard, and we'd move on,\" said McClain, who runs Merry Music Makers in Lakeview, a business focused on music education for children.\n\nMcClain's little ones aren't the only kids who have an opinion when it comes to housing, and in many cases youngsters' views weigh heavily on parents' real estate decisions, according to a 2018 Harris Poll survey of more than 2,000 U.S. adults.\n\nRenters paid attention to their kids' preferences even more: 83 percent said their children's opinions will be a factor when they buy a home.\n\nThe idea of involving children in a big decision is a great idea because it can help them feel a sense of control and ownership in what can be an overwhelming process, said Ryan Hooper, clinical psychologist in Chicago.\n\n\"Children may face serious difficulties in coping with significant moves, especially if it removes them from their current school or support system,\" he said.\n\nYounger children should feel like they're choosing their home—without actually getting a choice in the matter, said Adam Bailey, real estate attorney based in New York and author of the upcoming children's book Home, about the search for the perfect home from the viewpoint of a child.\n\nAsking them questions about what they like about the backyard of a potential home—or asking them where their toys would go in the house—will make them feel like they're being included in the decision-making process, Bailey said. Many of the aspects of home buying aren't a consideration for children, said Tracey Hampson, a real estate agent based in Santa Clarita, Calif. And placing too much emphasis on their opinions can ruin a fantastic home purchase.\n\nShe has a client who has been house-hunting for a while, and he always asks his young children their opinion. But when this buyer finally decided to write an offer on a home with a pool, his children burst into tears because they didn't want a pool.\n\n\"They ended up not submitting an offer,\" Hampson said. \"So speaking with your children before you make a real estate decision is wise, but I wouldn't base the purchasing decision solely on their opinions.\"\n\nThe other issue is that many children—especially older ones—may base their real estate knowledge on HGTV shows, which tend to focus on superficial aspects of real estate, said Aaron Norris of The Norris Group in Riverside, Calif.\n\n\"They love Chip and Joanna Gaines just as much as the rest of us,\" he said. \"HGTV has seriously changed how people view real estate. It's not shelter, it's a lifestyle. With that mindset change comes some serious money consequences.\"\n\nKids tend to get stuck in the features and the immediate benefits to them personally, Norris said. And while their opinions on those elements shouldn't reign supreme, the homebuying process could be a time to start talking to kids about money, budgeting, homeownership and other financial decisions.\n\n\"Their opinions can change tomorrow,\" Garner said. \"As harsh as it may be to say, that decision should likely not be made contingent on a child's opinions, but rather made for them with great consideration into what home can meet their needs best—and give them an opportunity to customize it bit and make it their own.\"\n\nThis advice is more relevant now than ever before, even as more parents want to embrace the ideas of their children, despite the current housing crunch.\n\nToday, wannabe homebuyers have to be more open when it comes to must-haves and what you can compromise on, Hampson said.\n\nAnd speaking of compromise: The McClain kids, hungry for outdoor space, fell in love with a home in the North Park neighborhood that had a large yard. But it wasn't ideal by their parents' standards.\n\nThe family ended up renting a house in North Center that had a smaller yard, but it was still big enough for playtime.\n\n\"I had to do a bit of a sales job with the kids since they loved the yard in North Park,\" McClain said. \"But there's a hammock they lounge on, a spot to jump rope, a place to play in the sprinkler, and an area to write with sidewalk chalk.\"",
+  "options": {
+   "A": "notes that aspects like children's friends and social activities should be considered upon homebuying",
+   "B": "believes that home buying should be based on children's needs rather than their opinions",
+   "C": "assumes that many children's views on real estate are influenced by the media",
+   "D": "remarks that significant moves may pose challenges to children",
+   "E": "says that it is wise to leave kids in the dark about real estate",
+   "F": "advises that home purchase should not be based only on children's decisions",
+   "G": "thinks that children should be given a sense of involvement in homebuying decisions"
+  },
+  "items": [
+   {
+    "no": 41,
+    "stem": "Ryan Hooper",
+    "answer": "D"
+   },
+   {
+    "no": 42,
+    "stem": "Adam Bailey",
+    "answer": "G"
+   },
+   {
+    "no": 43,
+    "stem": "Tracey Hampson",
+    "answer": "F"
+   },
+   {
+    "no": 44,
+    "stem": "Aaron Norris",
+    "answer": "C"
+   },
+   {
+    "no": 45,
+    "stem": "Julie Garner",
+    "answer": "B"
+   }
+  ],
+  "questions": null
+ },
+ "translation": {
+  "instruction": "In this section, there is a text in English. Translate it into Chinese. Write your translation on the ANSWER SHEET. (15 points)",
+  "passage": "It is easy to underestimate English writer James Herriot. He had such a pleasant, readable style that one might think that anyone could imitate it. How many times have I heard people say, \"I could write a book, I just haven't the time.\" Easily said. Not so easily done. James Herriot, contrary to popular opinion, did not find it easy in his early days of, as he put it, \"having a go at the writing game\". While he obviously had an abundance of natural talent, the final, polished work that he gave to the world was the result of years of practising, re-writing and reading. Like the majority of authors, he had to suffer many disappointments and rejections along the way, but these made him all the more determined to succeed. Everything he achieved in life was earned the hard way and his success in the literary field was no exception."
+ },
+ "writing": [
+  {
+   "part": "A",
+   "type": "应用文",
+   "instruction": "47. Directions:",
+   "prompt": "Suppose Professor Smith asked you to plan a debate on the theme of city traffic. Write him an email to (1) suggest a specific topic with your reason, and (2) tell him about your arrangement. You should write about 100 words neatly on the ANSWER SHEET. Do not sign your own name, use \"Li Ming\" instead. (10 points)"
+  },
+  {
+   "part": "B",
+   "type": "图表作文",
+   "instruction": "48. Directions:",
+   "prompt": "In this section, you are asked to write an essay based on the following chart. (1) Interpret the chart, and (2) Give your comments. You should write at least 150 words. Write your essay on the ANSWER SHEET. (15 points)",
+   "chart_desc": "柱状图，标题为某高校毕业生毕业去向选择(2013年与2018年对比)，共三类去向：求职就业(seeking employment)由2013年的68.1%降至2018年的60.7%(下降7.4个百分点)；升学/继续深造(pursuing further education)由26.3%升至34.0%(上升7.7个百分点)；创业(starting their own business)由1.3%升至2.6%(上升1.3个百分点)。"
+  }
+ ]
+}

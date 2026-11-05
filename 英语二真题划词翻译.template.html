@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>考研英语二真题 · 划词精读</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%23a3402d'/%3E%3Ctext x='16' y='23' font-size='19' text-anchor='middle' fill='%23fbf8f0' font-family='Georgia,serif' font-weight='bold'%3E%E8%8B%B1%3C/text%3E%3C/svg%3E">
+<!-- 预热与火山方舟的连接：提前完成 DNS/TCP/TLS，降低发送到首字的等待（不影响模型输出） -->
+<link rel="preconnect" href="https://ark.cn-beijing.volces.com" crossorigin>
+<link rel="dns-prefetch" href="https://ark.cn-beijing.volces.com">
+<style>
+/* ============ 基础与色板 ============ */
+:root{
+  --desk:#e9e2d0;
+  --paper:#fbf8f0;
+  --paper-edge:#efe8d6;
+  --ink:#2a2722;
+  --ink-soft:#57524a;
+  --ink-faint:#8a8374;
+  --rule:#ddd4bf;
+  --accent:#a3402d;
+  --accent-soft:#f3e3dd;
+  --pine:#466154;
+  --pine-soft:#e3eae4;
+  --gold:#9a7b34;
+  --warn-bg:#f6e3d0; --warn-ink:#a85f1e;
+  --key-bg:#efe6c8;
+  --sidebar:#e5ddc8;
+  --sidebar-edge:#d2c8ad;
+  --side-hover:#ddd3b8;
+  --tabs-bg:#f5efdf;
+  --topbar-bg:#2f2c26;
+  --topbar-line:#1f1d18;
+  --topbar-btn:#5a5346;
+  --topbar-btn-hover:#443f35;
+  --bubble-bg:#fffdf8;
+  --bubble-edge:#c9bda0;
+  --bubble-line:#ece3cd;
+  --bubble-act:#faf5e8;
+  --chip-bg:#f3ede0;
+  --chip-edge:#ddd2b4;
+  --writing-bg:#fdfaf2;
+  --chart-bg:#f1ebe0;
+  --trans-line:#e7dfc9;
+  --shadow:rgba(60,50,20,.22);
+  --body-size:19px;
+  --lh:1.95;
+  /* 三栏宽度（桌面可拖动分界线调整，抽屉模式由媒体查询覆盖） */
+  --sb-w:236px;   /* 左侧年份试卷栏 */
+  --wp-w:360px;   /* 右侧收藏面板 */
+  /* 全卷英文统一排版：字体、字号、字重、行高 */
+  --en-font:Georgia,"Times New Roman",serif;
+  --en-size:var(--body-size);
+  --en-weight:400;
+  --en-lh:1.95;
+}
+/* 黑夜模式（护眼深色） */
+body.dark{
+  --desk:#161511;
+  --paper:#24221d;
+  --paper-edge:#37342c;
+  --ink:#e9e2d2;
+  --ink-soft:#c4bdab;
+  --ink-faint:#948c7a;
+  --rule:#3d3a31;
+  --accent:#e08a6c;
+  --accent-soft:#3d2c26;
+  --pine:#a4c2ad;
+  --pine-soft:#2f3a33;
+  --gold:#cba65e;
+  --warn-bg:#3c2c1c; --warn-ink:#d59a5a;
+  --key-bg:#38301e;
+  --sidebar:#201e19;
+  --sidebar-edge:#37342c;
+  --side-hover:#33302a;
+  --tabs-bg:#23211c;
+  --topbar-bg:#171613;
+  --topbar-line:#000000;
+  --topbar-btn:#4a463c;
+  --topbar-btn-hover:#33302a;
+  --bubble-bg:#28261f;
+  --bubble-edge:#454136;
+  --bubble-line:#3d3a31;
+  --bubble-act:#322f27;
+  --chip-bg:#2f2c25;
+  --chip-edge:#47433a;
+  --writing-bg:#26241e;
+  --chart-bg:#2e2b22;
+  --trans-line:#3b372d;
+  --shadow:rgba(0,0,0,.55);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--desk);
+  color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Segoe UI",sans-serif;
+  font-size:15px;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:#e8c88f;}
+body.dark ::selection{background:#7a5a3a;}
+button{font-family:inherit;cursor:pointer;}
+.mono{font-family:ui-monospace,Consolas,"Courier New",monospace;}
+
+/* ============ 顶栏 ============ */
+#topbar{
+  position:fixed;top:0;left:0;right:0;height:52px;z-index:60;
+  display:flex;align-items:center;gap:10px;padding:0 14px;
+  background:var(--topbar-bg);color:#f3eee2;
+  border-bottom:2px solid var(--topbar-line);
+}
+#topbar .brand{font-family:Georgia,"Times New Roman",serif;font-size:17px;letter-spacing:.5px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+#topbar .brand .brand-short{display:none;}
+#topbar .tb-btn .lbl-s{display:none;}
+#topbar .brand small{color:#b9b09c;font-size:11px;letter-spacing:2px;margin-left:8px;font-family:inherit;}
+#topbar .spacer{flex:1;}
+#menuBtn{display:inline-flex;} /* 桌面用于收起/唤出年份栏，移动端用于打开抽屉 */
+.tb-btn{
+  background:transparent;border:1px solid var(--topbar-btn);color:#e8e1cf;border-radius:5px;
+  font-size:13px;padding:6px 10px;line-height:1;white-space:nowrap;
+}
+.tb-btn:hover{background:var(--topbar-btn-hover);}
+.tb-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+#fontControls{display:flex;align-items:center;gap:2px;}
+#fontControls button{width:30px;height:30px;border-radius:5px;font-size:14px;}
+#fontControls .fa{font-size:17px;}
+#fontVal{font-size:11px;color:#b9b09c;width:34px;text-align:center;}
+
+/* ============ 布局 ============ */
+#layout{display:flex;padding-top:52px;min-height:100vh;}
+#sidebar{
+  width:var(--sb-w);flex:0 0 var(--sb-w);position:fixed;top:52px;bottom:0;left:0;
+  overflow-y:auto;overscroll-behavior:contain;background:var(--sidebar);border-right:1px solid var(--sidebar-edge);
+  padding:14px 0 40px;z-index:40;transition:transform .22s ease;
+}
+#main{flex:1;min-width:0;margin-left:var(--sb-w);margin-right:0;
+  padding:26px 30px 80px;transition:margin-right .2s,margin-left .22s ease;}
+#main.withPanel{margin-right:var(--wp-w);}
+#wordPanel{
+  width:var(--wp-w);flex:0 0 var(--wp-w);position:fixed;top:52px;bottom:0;right:0;
+  background:var(--paper);border-left:1px solid var(--sidebar-edge);z-index:45;
+  display:flex;flex-direction:column;
+}
+#wordPanel.hidden{display:none;}
+#scrim{display:none;}
+
+/* ---- 三栏分界线：透明热区，悬停/拖动显示一条高亮竖线 ---- */
+.col-divider{position:fixed;top:52px;bottom:0;width:9px;z-index:46;
+  cursor:ew-resize;touch-action:none;background:transparent;}
+#divL{left:var(--sb-w);margin-left:-4px;}
+#divR{right:var(--wp-w);margin-right:-4px;}
+.col-divider::after{content:"";position:absolute;top:0;bottom:0;width:2px;
+  background:transparent;transition:background .15s;}
+#divL::after{left:3px;}
+#divR::after{right:3px;}
+.col-divider:hover::after,.col-divider.active::after{background:var(--accent);}
+body.col-resizing,body.col-resizing *{user-select:none !important;cursor:ew-resize !important;}
+
+/* ---- 桌面端收起左侧年份栏 ---- */
+body.sb-collapsed #sidebar{transform:translateX(-100%);}
+body.sb-collapsed #main{margin-left:0;}
+body.sb-collapsed #divL{display:none;}
+/* 收藏面板收起时，右侧分界线一并隐藏，不显示也不响应 */
+body.wp-collapsed #divR{display:none;}
+
+/* ============ 侧栏目录 ============ */
+.side-h{padding:8px 18px 6px;font-size:12px;color:var(--ink-faint);letter-spacing:2px;}
+.side-year{display:block;width:100%;text-align:left;border:0;background:transparent;
+  padding:8px 18px;font-size:14px;color:var(--ink);display:flex;align-items:baseline;gap:8px;}
+.side-year:hover{background:var(--side-hover);}
+.side-year.active{background:var(--accent-soft);color:var(--accent);font-weight:700;}
+.side-year .y{font-family:Georgia,serif;font-size:17px;}
+.side-year .tag{font-size:10px;color:var(--accent);border:1px solid currentColor;border-radius:3px;padding:0 4px;}
+.side-sections{padding:2px 0 8px 26px;display:none;}
+.side-year.open + .side-sections{display:block;}
+.side-sections a{display:block;padding:4px 14px 4px 8px;font-size:13px;color:var(--ink-soft);text-decoration:none;border-left:2px solid transparent;}
+.side-sections a:hover{color:var(--accent);}
+.side-sections a.active{color:var(--accent);border-left-color:var(--accent);font-weight:700;}
+.side-note{margin:16px 18px 0;font-size:11px;color:var(--ink-faint);line-height:1.7;}
+
+/* ============ 首页 ============ */
+#homeView{max-width:940px;margin:0 auto;}
+.home-hero{padding:30px 6px 18px;}
+.home-hero h1{font-family:Georgia,"Times New Roman",serif;font-size:34px;margin:0 0 6px;letter-spacing:1px;}
+.home-hero h1 .zh{font-family:inherit;letter-spacing:4px;color:var(--accent);}
+.home-hero p{color:var(--ink-soft);line-height:1.9;margin:6px 0;font-size:14px;}
+.usage{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0 8px;}
+.usage .card{background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;box-shadow:0 1px 3px rgba(90,80,50,.08);}
+.usage .card h3{margin:0 0 6px;font-size:14px;color:var(--accent);}
+.usage .card p{margin:0;font-size:13px;line-height:1.75;color:var(--ink-soft);}
+.year-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;}
+.year-card{background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;text-align:left;
+  text-decoration:none;color:var(--ink);box-shadow:0 1px 3px rgba(90,80,50,.08);position:relative;}
+.year-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 5px 14px rgba(90,80,50,.15);}
+.year-card .yc-year{font-family:Georgia,serif;font-size:26px;font-weight:700;}
+.year-card .yc-sub{font-size:12px;color:var(--ink-faint);margin-top:3px;}
+.year-card .yc-badges{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;}
+.yc-badges b{font-weight:400;font-size:10px;border-radius:3px;padding:1px 5px;}
+.badge-ok{background:var(--pine-soft);color:var(--pine);}
+.badge-miss{background:var(--warn-bg);color:var(--warn-ink);}
+.badge-key{background:var(--key-bg);color:var(--gold);}
+
+/* ============ 试卷纸 ============ */
+.sheet{
+  background:var(--paper);border:1px solid var(--paper-edge);border-radius:4px;
+  box-shadow:0 2px 6px rgba(80,70,40,.12), 0 12px 40px rgba(80,70,40,.10);
+  max-width:860px;margin:0 auto;padding:44px 56px 60px;
+}
+.paper-head{text-align:center;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:8px;}
+.paper-head h2{font-family:Georgia,"Times New Roman",serif;font-size:25px;margin:0 0 4px;letter-spacing:1px;}
+.paper-head .sub{font-size:13px;color:var(--ink-faint);letter-spacing:3px;}
+.paper-head .meta{font-size:12px;color:var(--ink-faint);margin-top:6px;}
+.sec-tabs{position:sticky;top:52px;z-index:20;background:var(--tabs-bg);border-bottom:1px solid var(--rule);
+  display:flex;flex-wrap:wrap;gap:2px;margin:14px -56px 0;padding:8px 44px 8px;}
+.sec-tabs a{font-size:12.5px;color:var(--ink-soft);text-decoration:none;padding:5px 9px;border-radius:5px;white-space:nowrap;}
+.sec-tabs a:hover{background:var(--accent-soft);color:var(--accent);}
+.sec-tabs a.active{background:var(--accent);color:#fff;}
+.sec-miss{background:var(--warn-bg);color:var(--warn-ink);border-radius:5px;padding:20px 24px;text-align:center;margin:20px 0;font-size:14px;}
+
+.sec{margin-top:34px;scroll-margin-top:110px;}
+.sec-title{font-family:Georgia,"Times New Roman",serif;font-size:20px;margin:0 0 2px;}
+.sec-title .zh{font-family:inherit;color:var(--accent);font-size:15px;margin-left:10px;letter-spacing:1px;}
+.sec-instr{font-size:12.5px;color:var(--ink-faint);font-style:italic;margin:4px 0 14px;line-height:1.7;}
+.passage{font-family:var(--en-font);font-size:var(--en-size);font-weight:var(--en-weight);line-height:var(--en-lh);
+  color:var(--ink);text-align:left;}
+.passage p{margin:0 0 13px;text-indent:2em;}
+.passage .no-indent{text-indent:0;}
+
+/* 完形空 */
+.blank{display:inline-flex;align-items:center;justify-content:center;min-width:2.1em;height:1.35em;
+  border-bottom:1.5px solid var(--ink);margin:0 2px;font-family:Georgia,serif;vertical-align:baseline;
+  font-size:.72em;color:var(--ink-faint);position:relative;top:-2px;}
+body.show-answers .blank{border-bottom-color:var(--accent);color:var(--accent);font-weight:700;}
+body.show-answers .blank .bn{display:none;}
+.blank .filled{display:none;font-style:italic;}
+body.show-answers .blank .filled{display:inline;}
+
+/* 题目（题干、选项统一英文字体/字号/行高） */
+.q{margin:14px 0 16px;font-family:var(--en-font);font-size:var(--en-size);font-weight:var(--en-weight);
+  line-height:var(--en-lh);}
+.q .stem{font-family:inherit;}
+.q .stem .qno{font-weight:700;margin-right:6px;}
+.opts{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:2px 22px;}
+.opts.single{grid-template-columns:1fr;}
+.cloze-block .opts{grid-template-columns:repeat(2,1fr);}
+.opts li{font-family:inherit;line-height:inherit;}
+.opts li .ol{display:inline-block;min-width:1.6em;color:var(--pine);font-weight:700;}
+body.show-answers .opts li.correct{color:var(--accent);font-weight:700;}
+body.show-answers .opts li.correct .ol{color:var(--accent);}
+.ans-letter{display:none;color:var(--accent);font-weight:700;margin-left:6px;}
+body.show-answers .ans-letter{display:inline;}
+
+/* 新题型 */
+.nt-box{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px;}
+.nt-cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;}
+.nt-list{list-style:none;margin:0;padding:0;}
+.nt-list li{font-family:var(--en-font);font-size:var(--en-size);font-weight:var(--en-weight);
+  line-height:var(--en-lh);margin-bottom:10px;padding-left:4px;}
+.nt-list .nno{font-weight:700;color:var(--pine);margin-right:6px;}
+.nt-opts{list-style:none;margin:0;padding:0;}
+.nt-opts li{font-family:var(--en-font);font-size:var(--en-size);font-weight:var(--en-weight);
+  line-height:var(--en-lh);margin-bottom:10px;}
+.nt-opts .ol{font-weight:700;color:var(--accent);margin-right:8px;}
+.heading-slot{display:block;margin:16px 0 2px;font-family:var(--en-font);font-size:var(--en-size);
+  font-weight:700;color:var(--accent);border-top:1px dashed var(--rule);padding-top:10px;}
+
+/* 翻译/作文（英文统一排版） */
+.trans-passage{font-family:var(--en-font);font-size:var(--en-size);font-weight:var(--en-weight);
+  line-height:var(--en-lh);background:
+   repeating-linear-gradient(transparent,transparent calc(var(--en-lh) * 1em - 1.5px),
+    var(--trans-line) calc(var(--en-lh) * 1em - 1.5px),var(--trans-line) calc(var(--en-lh) * 1em));
+  padding:4px 6px 10px;}
+.writing-block{border:1px solid var(--rule);border-radius:6px;padding:14px 18px;margin-bottom:18px;background:var(--writing-bg);}
+.writing-block h4{margin:0 0 8px;font-size:15px;color:var(--pine);}
+.writing-block .prompt{font-family:var(--en-font);font-size:var(--en-size);font-weight:var(--en-weight);
+  line-height:var(--en-lh);}
+.chart-desc{margin-top:12px;background:var(--chart-bg);border-left:3px solid var(--gold);border-radius:0 5px 5px 0;
+  padding:10px 14px;font-size:13.5px;line-height:1.8;color:var(--ink-soft);}
+.chart-desc b{color:var(--gold);}
+
+/* ============ 单词气泡 ============ */
+#wordBubble{position:absolute;z-index:93;display:none;max-width:380px;min-width:240px;
+  background:var(--bubble-bg);border:1px solid var(--bubble-edge);border-radius:10px;
+  box-shadow:0 10px 34px var(--shadow);overflow:hidden;}
+#wordBubble .wb-head{padding:11px 14px 7px;border-bottom:1px solid var(--bubble-line);}
+#wordBubble .wb-word{font-family:Georgia,serif;font-size:21px;font-weight:700;color:var(--ink);}
+#wordBubble .wb-word .lemma{font-size:12px;color:var(--ink-faint);font-weight:400;margin-left:8px;font-family:inherit;}
+#wordBubble .wb-phon{color:var(--pine);font-size:13.5px;margin-top:2px;font-family:Georgia,serif;}
+#wordBubble .wb-body{padding:9px 14px 12px;font-size:14px;line-height:1.85;max-height:280px;overflow-y:auto;overscroll-behavior:contain;}
+#wordBubble .pos-line{margin:2px 0;}
+#wordBubble .pos-line .pos{color:var(--accent);font-weight:700;margin-right:4px;}
+#wordBubble .wb-loading{color:var(--ink-faint);font-size:13px;}
+#wordBubble .wb-src{font-size:11px;color:var(--ink-faint);margin-top:4px;}
+#wordBubble .wb-actions{display:flex;border-top:1px solid var(--bubble-line);}
+#wordBubble .wb-actions button{flex:1;border:0;background:var(--bubble-act);padding:9px 0;font-size:13px;color:var(--pine);}
+#wordBubble .wb-actions button + button{border-left:1px solid var(--bubble-line);}
+#wordBubble .wb-actions button:hover{background:var(--pine-soft);}
+#wordBubble .wb-actions button.faved{color:var(--accent);font-weight:700;}
+/* 小喇叭图标按钮：不占满、居中，气泡与划句工具条共用 */
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;}
+#wordBubble .wb-actions .icon-btn{flex:0 0 auto;padding:9px 14px;color:var(--pine);}
+#wordBubble .wb-actions .icon-btn:hover{background:var(--pine-soft);}
+#favBar .icon-btn{color:#f3eee2;}
+#favBar .icon-btn:hover{background:var(--topbar-btn-hover);}
+
+/* ============ 右侧：我收藏的单词 ============ */
+.wp-head{padding:12px 16px 0;border-bottom:1px solid var(--sidebar-edge);}
+.wp-head .wp-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.wp-head .wp-count{font-size:11px;color:var(--ink-faint);font-weight:400;}
+.wp-tabs{display:flex;gap:6px;margin-top:10px;}
+.wp-tab{flex:1;border:1px solid var(--bubble-edge);background:var(--bubble-act);color:var(--ink-soft);
+  border-radius:7px 7px 0 0;border-bottom:0;padding:7px 0;font-size:13px;font-weight:700;}
+.wp-tab .ft-n{font-size:11px;font-weight:400;color:var(--ink-faint);margin-left:2px;}
+.wp-tab.active{background:var(--paper);color:var(--accent);border-color:var(--sidebar-edge);
+  position:relative;box-shadow:0 2px 0 var(--paper);}
+.wp-tab.active .ft-n{color:var(--accent);}
+.wp-body{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:12px 12px 30px;}
+.wp-empty{text-align:center;color:var(--ink-faint);font-size:13px;padding:50px 20px;line-height:2;}
+.wp-word{background:var(--paper);border:1px solid var(--rule);border-radius:8px;margin-bottom:10px;padding:9px 12px;
+  cursor:pointer;-webkit-user-select:none;user-select:none;}
+.wp-word:hover{border-color:var(--accent);}
+.wp-word .w-top{display:flex;align-items:baseline;gap:8px;}
+.wp-word .w-lemma{font-family:var(--en-font);font-size:var(--en-size);font-weight:var(--en-weight);
+  line-height:var(--en-lh);color:var(--ink);}
+.wp-word .w-phon{font-size:12px;color:var(--pine);font-family:var(--en-font);}
+.wp-word .w-del{margin-left:auto;border:0;background:none;font-size:12px;color:var(--ink-faint);padding:2px 4px;}
+.wp-word .w-del:hover{color:var(--accent);}
+.wp-word .w-mean{font-size:12.5px;line-height:1.7;color:var(--ink-soft);margin-top:3px;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.wp-foot{border-top:1px solid var(--sidebar-edge);padding:9px 12px;display:flex;gap:8px;}
+.wp-foot button{flex:1;border:1px solid var(--bubble-edge);background:var(--bubble-act);border-radius:6px;
+  padding:7px 0;font-size:12.5px;color:var(--ink-soft);}
+.wp-foot button:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ============ 倒计时：紧贴按钮的紧凑下拉小面板 ============ */
+#timerPanel{position:fixed;z-index:90;display:none;top:56px;right:10px;width:218px;max-width:calc(100vw - 16px);
+  background:var(--bubble-bg);color:var(--ink);
+  border:1px solid var(--bubble-edge);border-radius:12px;box-shadow:0 14px 44px rgba(0,0,0,.28);
+  padding:10px 12px 12px;}
+#timerPanel.show{display:block;}
+#timerPanel .tp2-caret{position:absolute;top:-7px;width:12px;height:12px;background:var(--bubble-bg);
+  border-left:1px solid var(--bubble-edge);border-top:1px solid var(--bubble-edge);
+  transform:rotate(45deg);border-radius:2px;}
+.tp2-title{font-size:13.5px;font-weight:700;margin:0 0 8px;display:flex;align-items:center;}
+.tp2-x{margin-left:auto;border:0;background:transparent;color:var(--ink-faint);font-size:18px;line-height:1;padding:0 4px;}
+.tp2-x:hover{color:var(--accent);}
+.tp2-inputs{display:flex;gap:6px;}
+.tp2-inputs label{flex:1;text-align:center;font-size:11px;color:var(--ink-faint);}
+.tp2-inputs input{width:100%;font-size:18px;text-align:center;border:1px solid var(--rule);border-radius:7px;
+  background:var(--paper);color:var(--ink);padding:6px 0;font-family:Georgia,serif;margin-top:3px;}
+.tp2-inputs input:focus{outline:2px solid var(--accent);outline-offset:-1px;}
+.tp2-time{display:none;flex-direction:column;align-items:center;gap:6px;
+  font-family:Georgia,serif;font-size:24px;font-weight:700;margin:4px 0 10px;
+  color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:0;white-space:nowrap;}
+#timerTime{display:block;}
+.tp2-tag{display:none;font-size:12px;font-weight:700;letter-spacing:1px;
+  color:#fff;background:var(--accent);border-radius:4px;padding:2px 8px;}
+.tp2-time.over #timerTime{color:#c0392b;}
+body.dark .tp2-time.over #timerTime{color:#e07a5f;}
+.tp2-btns{display:flex;gap:8px;}
+.tp2-btns button{flex:1;border:1px solid var(--bubble-edge);background:var(--bubble-act);color:var(--ink);
+  border-radius:7px;padding:7px 0;font-size:13px;}
+.tp2-btns button:hover{border-color:var(--accent);}
+.tp2-btns button.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.tp2-btns button:disabled{opacity:.45;cursor:default;}
+.tp2-btns button[hidden]{display:none;}
+.tp2-inputs[hidden]{display:none;}
+
+/* ============ 纯计时秒表：复用倒计时面板视觉 ============ */
+#swPanel{position:fixed;z-index:90;display:none;top:56px;right:10px;width:218px;max-width:calc(100vw - 16px);
+  background:var(--bubble-bg);color:var(--ink);
+  border:1px solid var(--bubble-edge);border-radius:12px;box-shadow:0 14px 44px rgba(0,0,0,.28);
+  padding:10px 12px 12px;}
+#swPanel.show{display:block;}
+#swPanel .tp2-caret{position:absolute;top:-7px;width:12px;height:12px;background:var(--bubble-bg);
+  border-left:1px solid var(--bubble-edge);border-top:1px solid var(--bubble-edge);
+  transform:rotate(45deg);border-radius:2px;}
+.sw-time{display:flex;justify-content:center;align-items:center;
+  font-family:Georgia,serif;font-size:26px;font-weight:700;margin:6px 0 12px;
+  color:var(--pine);font-variant-numeric:tabular-nums;white-space:nowrap;}
+/* 运行中：秒表 / 倒计时按钮仅变绿色，不改变尺寸 */
+#swBtn.running,#timerBtn.running{background:var(--pine);border-color:var(--pine);color:#fff;}
+/* 深色模式下 --pine 为浅绿，白字对比不足，改用深字保证清晰 */
+body.dark #swBtn.running,body.dark #timerBtn.running{color:#152922;}
+/* 倒计时结束弹窗 */
+#timerModal{position:fixed;inset:0;z-index:95;display:none;align-items:center;justify-content:center;
+  background:rgba(20,18,12,.55);}
+#timerModal.show{display:flex;}
+.tm-card{background:var(--bubble-bg);color:var(--ink);border:1px solid var(--bubble-edge);
+  border-radius:14px;padding:34px 44px 26px;text-align:center;box-shadow:0 20px 70px rgba(0,0,0,.5);max-width:90vw;}
+.tm-card h2{margin:0 0 10px;font-size:26px;font-family:Georgia,"Microsoft YaHei",serif;color:var(--accent);}
+.tm-card p{margin:0 0 22px;color:var(--ink-soft);font-size:14px;}
+.tm-card button{border:0;background:var(--accent);color:#fff;border-radius:8px;padding:10px 30px;font-size:15px;}
+.tm-card button:hover{opacity:.9;}
+
+/* ============ 通用确认弹层 ============ */
+#confirmModal{position:fixed;inset:0;z-index:96;display:none;align-items:center;justify-content:center;
+  background:rgba(20,18,12,.5);}
+#confirmModal.show{display:flex;}
+.cm-card{background:var(--bubble-bg);color:var(--ink);border:1px solid var(--bubble-edge);
+  border-radius:14px;padding:24px 26px 20px;width:min(380px,88vw);box-shadow:0 20px 70px rgba(0,0,0,.45);}
+.cm-title{font-size:17px;font-weight:700;margin-bottom:10px;color:var(--ink);}
+.cm-msg{font-size:14px;line-height:1.7;color:var(--ink-soft);margin-bottom:20px;}
+.cm-btns{display:flex;gap:10px;justify-content:flex-end;}
+.cm-btns button{border:1px solid var(--bubble-edge);background:var(--bubble-act);color:var(--ink);
+  border-radius:8px;padding:8px 22px;font-size:14px;}
+.cm-btns button:hover{border-color:var(--accent);color:var(--accent);}
+.cm-btns button.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.cm-btns button.primary:hover{opacity:.9;color:#fff;}
+
+/* ============ 提示 toast ============ */
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#2f2c26;color:#f3eee2;
+  padding:9px 18px;border-radius:8px;font-size:13px;z-index:99;opacity:0;pointer-events:none;transition:opacity .25s;max-width:80vw;}
+#toast.show{opacity:1;}
+
+/* ============ 响应式 ============ */
+/* ============ 划选收藏条 ============ */
+#favBar{position:absolute;z-index:92;display:none;background:#2f2c26;border-radius:7px;
+  box-shadow:0 8px 24px rgba(0,0,0,.28);overflow:hidden;}
+#favBar button{border:0;background:transparent;color:#f3eee2;font-size:13px;padding:8px 14px;}
+#favBar button.primary{background:var(--accent);font-weight:700;}
+#favBar button:hover{background:var(--topbar-btn-hover);}
+#favBar .sel-hint{font-size:11px;color:#b9b09c;padding:0 10px;border-left:1px solid #4a4438;}
+/* ---- 划句翻译浮层：只显示中文，米白卡片，远距也清晰 ---- */
+#transPop{position:absolute;z-index:91;display:none;min-width:260px;max-width:520px;
+  background:var(--paper);border:1px solid var(--rule);border-radius:9px;
+  box-shadow:0 12px 32px rgba(0,0,0,.22);overflow:hidden;}
+#transPop .tp-pop-head{display:flex;align-items:center;justify-content:space-between;
+  padding:8px 14px;font-size:12px;letter-spacing:.5px;color:var(--pine);
+  border-bottom:1px solid var(--rule);background:var(--pine-soft);}
+#transPop .tp-pop-head button{border:0;background:transparent;font-size:17px;line-height:1;
+  cursor:pointer;color:var(--pine);padding:2px 6px;}
+#transPop .tp-pop-head button:hover{color:var(--ink);}
+#transPop .tp-pop-body{padding:13px 16px;font-size:15px;line-height:1.75;color:var(--ink);}
+#transPop .tp-loading{color:var(--pine);font-size:13px;}
+#transPop .tp-error{color:#b04a3a;font-size:13px;}
+
+/* ============================================================
+   豆包 AI 迷你聊天窗（本地自用，右下角；多轮/流式/收起）
+   ============================================================ */
+#aiChat{position:fixed;right:24px;bottom:24px;z-index:90;width:384px;max-width:calc(100vw - 24px);
+  height:min(580px,calc(100vh - 48px));display:flex;flex-direction:column;
+  --aic-size:14px; /* AI 窗内独立字号基准，与卷面 --body-size 互不影响 */
+  background:var(--paper);border:1px solid var(--bubble-edge);border-radius:12px;
+  box-shadow:0 18px 48px rgba(0,0,0,.28);overflow:hidden;}
+#aiChat[hidden]{display:none;}
+#aiFab{position:fixed;right:24px;bottom:24px;z-index:89;width:56px;height:56px;border-radius:50%;
+  border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fbf8f0;
+  background:linear-gradient(135deg,var(--accent),var(--pine));
+  box-shadow:0 10px 26px rgba(120,60,40,.38);
+  transition:transform .18s ease,box-shadow .18s ease;animation:aic-float 3.2s ease-in-out infinite;}
+#aiFab:hover{transform:translateY(-2px) scale(1.06);box-shadow:0 14px 32px rgba(120,60,40,.46);}
+#aiFab:active{transform:scale(.95);}
+#aiFab[hidden]{display:none;}
+@keyframes aic-float{0%,100%{box-shadow:0 10px 26px rgba(120,60,40,.36)}
+  50%{box-shadow:0 10px 32px rgba(120,60,40,.6)}}
+@media (prefers-reduced-motion:reduce){#aiFab{animation:none;}}
+@media (max-width:560px){#aiFab{right:16px;bottom:16px;width:52px;height:52px;}}
+.aic-head{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 12px;background:var(--topbar-bg);color:#f3eee2;flex:0 0 auto;
+  cursor:move;touch-action:none;user-select:none;}
+.aic-head-btns{cursor:default;}
+.aic-title{font-size:13.5px;font-weight:700;letter-spacing:.3px;}
+/* 四条边拖拽手柄：透明热区，鼠标移到边缘显示对应方向光标 */
+.aic-rz{position:absolute;z-index:3;background:transparent;}
+.aic-rz-t{top:0;left:10px;right:10px;height:9px;cursor:ns-resize;touch-action:none;}
+.aic-rz-b{bottom:0;left:10px;right:10px;height:9px;cursor:ns-resize;touch-action:none;}
+.aic-rz-l{left:0;top:10px;bottom:10px;width:9px;cursor:ew-resize;touch-action:none;}
+.aic-rz-r{right:0;top:10px;bottom:10px;width:9px;cursor:ew-resize;touch-action:none;}
+/* 四个角：对角方向，同时改变宽高；热区略大方便抓取 */
+.aic-rz-tl{top:0;left:0;width:14px;height:14px;cursor:nwse-resize;touch-action:none;z-index:4;}
+.aic-rz-br{bottom:0;right:0;width:14px;height:14px;cursor:nwse-resize;touch-action:none;z-index:4;}
+.aic-rz-tr{top:0;right:0;width:14px;height:14px;cursor:nesw-resize;touch-action:none;z-index:4;}
+.aic-rz-bl{bottom:0;left:0;width:14px;height:14px;cursor:nesw-resize;touch-action:none;z-index:4;}
+body.aic-dragging,body.aic-dragging *{user-select:none !important;}
+body.aic-dragging-rz-t,body.aic-dragging-rz-t *{cursor:ns-resize !important;}
+body.aic-dragging-rz-b,body.aic-dragging-rz-b *{cursor:ns-resize !important;}
+body.aic-dragging-rz-l,body.aic-dragging-rz-l *{cursor:ew-resize !important;}
+body.aic-dragging-rz-r,body.aic-dragging-rz-r *{cursor:ew-resize !important;}
+body.aic-dragging-rz-tl,body.aic-dragging-rz-tl *{cursor:nwse-resize !important;}
+body.aic-dragging-rz-br,body.aic-dragging-rz-br *{cursor:nwse-resize !important;}
+body.aic-dragging-rz-tr,body.aic-dragging-rz-tr *{cursor:nesw-resize !important;}
+body.aic-dragging-rz-bl,body.aic-dragging-rz-bl *{cursor:nesw-resize !important;}
+body.aic-dragging-move,body.aic-dragging-move *{cursor:move !important;}
+.aic-head-btns{display:flex;gap:4px;}
+.aic-head-btns button{border:0;background:transparent;color:#cfc7b6;font-size:12px;
+  padding:4px 8px;border-radius:5px;cursor:pointer;}
+.aic-head-btns button:hover{background:var(--topbar-btn-hover);color:#fff;}
+.aic-head-btns .aic-font-btn{font-weight:800;letter-spacing:-.3px;padding:4px 7px;}
+.aic-messages{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  padding:14px 14px 8px;display:flex;flex-direction:column;gap:12px;}
+.aic-msg{max-width:88%;padding:9px 12px;border-radius:10px;font-size:var(--aic-size);line-height:1.75;word-break:break-word;}
+.aic-msg.aic-user{align-self:flex-end;background:var(--accent);color:#fbf8f0;border-bottom-right-radius:3px;}
+.aic-msg.aic-ai{align-self:flex-start;background:var(--bubble-act);color:var(--ink);
+  border:1px solid var(--bubble-line);border-bottom-left-radius:3px;}
+.aic-msg.aic-ai.streaming::after{content:"▍";margin-left:2px;color:var(--pine);
+  animation:aic-blink 1s steps(2) infinite;}
+@keyframes aic-blink{0%,100%{opacity:1}50%{opacity:0}}
+.aic-msg.aic-error{align-self:center;background:var(--warn-bg);color:var(--warn-ink);
+  font-size:12.5px;padding:7px 12px;max-width:94%;}
+.aic-ai p{margin:0 0 8px;}
+.aic-ai p:last-child{margin-bottom:0;}
+.aic-ai ul,.aic-ai ol{margin:6px 0;padding-left:20px;}
+.aic-ai li{margin:3px 0;}
+.aic-ai strong{color:var(--accent);}
+.aic-ai code{background:var(--key-bg);padding:1px 5px;border-radius:4px;font-size:0.89em;}
+.aic-ai .aic-pre{margin:9px 0;padding:11px 13px;background:var(--key-bg);border:1px solid var(--bubble-line);
+  border-radius:8px;overflow-x:auto;overscroll-behavior-x:contain;overscroll-behavior-y:auto;
+  line-height:1.65;white-space:pre;tab-size:2;
+  font-family:Consolas,"Cascadia Code","Courier New","Microsoft YaHei",monospace;font-size:0.92em;}
+.aic-ai .aic-pre code{background:none;padding:0;border-radius:0;font-size:inherit;white-space:pre;}
+.aic-pre[data-lang]::before{content:attr(data-lang);display:block;margin-bottom:6px;font-family:inherit;
+  font-size:0.82em;letter-spacing:1px;color:var(--ink-faint);text-transform:uppercase;}
+.aic-ai h1,.aic-ai h2,.aic-ai h3,.aic-ai h4,.aic-ai h5,.aic-ai h6{margin:12px 0 7px;line-height:1.45;color:var(--ink);}
+.aic-ai h1{font-size:1.36em;}
+.aic-ai h2{font-size:1.25em;}
+.aic-ai h3{font-size:1.14em;}
+.aic-ai h4,.aic-ai h5,.aic-ai h6{font-size:1.07em;}
+.aic-ai em{font-style:italic;color:var(--ink-soft);}
+.aic-ai blockquote{margin:7px 0;padding:6px 12px;border-left:3px solid var(--pine);
+  background:var(--pine-soft);color:var(--ink-soft);border-radius:0 6px 6px 0;}
+.aic-ai hr{border:0;border-top:1px solid var(--rule);margin:10px 0;}
+.aic-ai table{border-collapse:collapse;width:100%;max-width:100%;margin:10px 0;font-size:0.93em;
+  display:block;overflow-x:auto;overscroll-behavior-x:contain;overscroll-behavior-y:auto;}
+.aic-ai th,.aic-ai td{border:1px solid var(--bubble-line);padding:6px 9px;text-align:left;line-height:1.5;white-space:nowrap;}
+.aic-ai th{background:var(--key-bg);font-weight:700;}
+.aic-ai tbody tr:nth-child(even){background:var(--bubble-act);}
+.aic-input-row{flex:0 0 auto;display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--rule);
+  background:var(--paper);align-items:flex-end;}
+#aicInput{flex:1;resize:none;max-height:120px;border:1px solid var(--bubble-edge);border-radius:8px;
+  padding:8px 10px;font-family:inherit;font-size:16px;line-height:1.5;color:var(--ink);background:var(--writing-bg);}
+#aicInput:focus{outline:2px solid var(--pine);outline-offset:0;}
+#aicSend{flex:0 0 auto;border:0;background:var(--accent);color:#fbf8f0;font-weight:700;
+  border-radius:8px;padding:9px 16px;cursor:pointer;}
+#aicSend:disabled{opacity:.55;cursor:not-allowed;}
+.aic-tool{flex:0 0 auto;display:flex;align-items:center;justify-content:center;min-width:40px;height:38px;
+  border:1px solid var(--bubble-edge);border-radius:8px;background:var(--writing-bg);color:var(--ink);
+  font-size:14px;font-weight:700;cursor:pointer;padding:0 8px;}
+.aic-tool:hover{border-color:var(--pine);color:var(--pine);}
+.aic-tool:disabled{opacity:.5;cursor:not-allowed;}
+#selFavBtn.faved{color:var(--accent);border-color:var(--accent);font-weight:700;}
+/* 打断按钮：默认隐藏，仅流式输出中显示 */
+#aicStop{display:none;}
+#aicStop.visible{display:flex;color:#fbf8f0;background:var(--ink);border-color:var(--ink);}
+#aicStop.visible:hover{background:var(--accent);border-color:var(--accent);}
+/* 主动打断后的小标记 */
+.aic-stop-tag{margin-top:8px;font-size:12px;color:var(--ink-faint);font-weight:700;}
+@media (max-width:560px){
+  #aiChat{right:10px;bottom:10px;width:calc(100vw - 20px);max-width:calc(100vw - 20px);height:calc(100vh - 20px);}
+}
+.wp-sent{background:var(--paper);border:1px solid var(--rule);border-radius:8px;margin-bottom:10px;padding:9px 12px;}
+.wp-sent .s-text{font-family:var(--en-font);font-size:var(--en-size);font-weight:var(--en-weight);
+  line-height:var(--en-lh);color:var(--ink);max-height:150px;overflow-y:auto;overscroll-behavior:contain;}
+.wp-sent .s-meta{font-size:10.5px;color:var(--pine);margin-top:6px;display:flex;align-items:center;gap:8px;}
+.wp-sent .s-del{margin-left:auto;border:0;background:none;font-size:12px;color:var(--ink-faint);padding:2px 4px;}
+.wp-sent .s-del:hover{color:var(--accent);}
+
+/* ============================================================
+   响应式：手机 / 平板（横竖屏）/ 矮横屏 / 电视（10 英尺大屏）
+   断点：1280 小桌面·平板横屏 ｜ 1024 平板竖屏 ｜ 900 抽屉模式
+         600 手机单列 ｜ 480 矮横屏 ｜ 1500+hover:none 电视
+   ============================================================ */
+
+/* ---- 1280：小桌面 / 平板横屏，收藏面板改为覆盖式，不再挤占正文 ---- */
+@media (max-width:1280px){
+  #main.withPanel{margin-right:0;}
+  #wordPanel{width:var(--wp-w);box-shadow:-8px 0 30px rgba(0,0,0,.22);}
+}
+
+/* ---- 1024：平板竖屏，侧栏收窄到 200 ---- */
+@media (max-width:1024px){
+  #sidebar{width:200px;flex-basis:200px;}
+  #main{margin-left:200px;}
+  #divL{display:none;} /* 此区间侧栏固定宽度，不提供拖拽 */
+  .year-grid{grid-template-columns:repeat(3,1fr);}
+}
+
+/* ---- 900：进入抽屉模式（手机 + 小平板竖屏），侧栏与收藏面板都侧滑 ---- */
+@media (max-width:900px){
+  #menuBtn{display:inline-flex;}
+  .col-divider{display:none;} /* 抽屉模式不显示拖拽分界线 */
+  #sidebar{width:264px;flex-basis:264px;transform:translateX(-100%);
+    transition:transform .22s ease;box-shadow:6px 0 24px rgba(0,0,0,.18);}
+  #sidebar.open{transform:none;}
+  #main{margin-left:0;padding:18px 14px 60px;}
+  #scrim.show{display:block;position:fixed;inset:52px 0 0 0;
+    background:rgba(40,35,20,.38);z-index:35;}
+  #wordPanel{width:88vw;max-width:380px;transform:translateX(100%);
+    transition:transform .22s ease;z-index:50;}
+  #wordPanel:not(.hidden){transform:none;}
+  .sheet{padding:30px 22px 44px;}
+  .sec-tabs{margin-left:-22px;margin-right:-22px;padding:8px 16px;}
+  .opts,.cloze-block .opts{grid-template-columns:repeat(2,1fr);}
+}
+
+/* ---- 600：手机，单列 + 顶栏紧凑且可横向滑动 ---- */
+@media (max-width:600px){
+  #wordBubble{max-width:calc(100vw - 20px);}
+  #wordBubble .wb-word .lemma{display:block;margin-left:0;margin-top:2px;}
+  #topbar{gap:6px;padding:0 8px;overflow-x:auto;overflow-y:hidden;
+    overscroll-behavior-x:contain;scrollbar-width:none;}
+  #topbar::-webkit-scrollbar{display:none;}
+  #topbar > *{flex-shrink:0;}
+  #topbar .spacer{display:none;}
+  #topbar .brand{flex-shrink:0;min-width:0;max-width:36vw;overflow:hidden;text-overflow:ellipsis;}
+  #fontControls{flex-shrink:0;}
+  #topbar .brand small,#fontVal{display:none;}
+  #topbar .brand .brand-long{display:none;}
+  #topbar .brand .brand-short{display:inline;}
+  #topbar .tb-btn .lbl-l{display:none;}
+  #topbar .tb-btn .lbl-s{display:inline;}
+  .tb-btn{font-size:12px;padding:6px 8px;}
+  #topbar .brand{font-size:14px;}
+  #main{padding:14px 10px 50px;}
+  .sheet{padding:24px 16px 40px;}
+  .sec-tabs{margin-left:-16px;margin-right:-16px;padding:8px 12px;}
+  .usage,.year-grid{grid-template-columns:1fr;}
+  .opts,.cloze-block .opts{grid-template-columns:1fr;}
+  .nt-cols{grid-template-columns:1fr;}
+}
+
+/* ---- 480 矮横屏：手机 / 小平板横屏，压缩顶栏与上下留白 ---- */
+@media (max-height:480px) and (orientation:landscape){
+  #topbar{height:44px;}
+  #layout{padding-top:44px;}
+  #sidebar{top:44px;}
+  #wordPanel{top:44px;}
+  .sec-tabs{top:44px;}
+  #main{padding-top:12px;padding-bottom:30px;}
+}
+
+/* ============================================================
+   电视端（10 英尺 UI）：大屏 + 无悬停（遥控器 D-pad）
+   远距观看 → 放大字号、限宽居中、强焦点框、加大可点区域
+   ============================================================ */
+@media (min-width:1500px) and (hover:none){
+  #topbar{height:64px;}
+  #layout{padding-top:64px;}
+  #sidebar{top:64px;width:284px;flex-basis:284px;}
+  #main{margin-left:284px;padding:40px 48px 110px;}
+  #wordPanel{top:64px;}
+  .sheet{max-width:1500px;padding:60px 72px 84px;}
+  #homeView{max-width:1500px;}
+  /* 英文正文在用户字号基础上整体放大，行高用无单位值会自动跟随 */
+  .passage,.q,.nt-list li,.nt-opts li,.heading-slot,.trans-passage,
+  .writing-block .prompt,.wp-word .w-lemma,.wp-sent .s-text{
+    font-size:calc(var(--en-size) * 1.28);}
+  /* 中文界面字号同步放大 */
+  body{font-size:18px;}
+  .tb-btn{font-size:16px;padding:9px 16px;min-height:44px;}
+  .wp-word{padding:16px 20px;}
+  .wp-foot button,#wordPanel button{font-size:16px;}
+  /* 遥控器焦点：粗描边 + 偏移，当前落在哪一目了然 */
+  :focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px;}
+}
+
+/* UA 命中电视但 hover 特性异常时的关键兜底（JS 会加 body.tv） */
+@media (min-width:1500px){
+  body.tv .passage,body.tv .q,body.tv .nt-list li,body.tv .nt-opts li,
+  body.tv .heading-slot,body.tv .trans-passage,body.tv .writing-block .prompt,
+  body.tv .wp-word .w-lemma,body.tv .wp-sent .s-text{font-size:calc(var(--en-size) * 1.28);}
+  body.tv :focus-visible{outline:3px solid var(--accent);outline-offset:3px;}
+}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <button class="tb-btn" id="menuBtn" aria-label="目录">目录</button>
+  <div class="brand"><span class="brand-long">考研英语二 · 真题划词精读</span><span class="brand-short">英语二真题</span><small>ENGLISH II 2010–2026</small></div>
+  <div class="spacer"></div>
+  <div id="fontControls">
+    <button class="tb-btn" id="fontDec" title="减小字号">A−</button>
+    <span id="fontVal">19</span>
+    <button class="tb-btn" id="fontInc" title="增大字号">A+</button>
+  </div>
+  <button class="tb-btn" id="ansToggle" title="完形填空显示完整文章/题目标注答案">显示答案</button>
+  <button class="tb-btn active" id="panelToggle" title="我收藏的单词和句子"><span class="lbl-l">我的收藏</span><span class="lbl-s">收藏</span></button>
+  <button class="tb-btn" id="timerBtn" title="打开倒计时"><span class="lbl-l">倒计时</span><span class="lbl-s">倒计</span></button>
+  <button class="tb-btn" id="swBtn" title="打开纯计时秒表"><span class="lbl-l">秒表</span><span class="lbl-s">秒表</span></button>
+  <button class="tb-btn" id="darkToggle" title="切换黑夜 / 白天模式"><span class="lbl-l">黑夜模式</span><span class="lbl-s">深色</span></button>
+</div>
+
+<div id="layout">
+  <nav id="sidebar">
+    <div class="side-h">全部套题</div>
+    <div id="yearNav"></div>
+    <div class="side-note">点击卷面任意单词查词（音标、词性、释义），可在气泡里「收藏」；按住鼠标划选句子或段落，点「收藏本句」整句保存。收藏内容都在右侧「我的收藏」，本机离线保存。</div>
+  </nav>
+
+  <main id="main">
+    <div id="homeView"></div>
+    <div id="paperView" style="display:none;"></div>
+  </main>
+
+  <aside id="wordPanel" class="hidden">
+    <div class="wp-head">
+      <div class="wp-title">我的收藏 <span class="wp-count" id="wpCount"></span></div>
+      <div class="wp-tabs">
+        <button type="button" class="wp-tab active" data-favtab="word">单词 <span class="ft-n" id="ftWn">0</span></button>
+        <button type="button" class="wp-tab" data-favtab="sent">句子 <span class="ft-n" id="ftSn">0</span></button>
+      </div>
+    </div>
+    <div class="wp-body" id="wpBody">
+      <div class="wp-empty"></div>
+    </div>
+    <div class="wp-foot">
+      <button id="wpClear">清空全部收藏</button>
+    </div>
+  </aside>
+</div>
+<div class="col-divider" id="divL" title="拖动调整左侧栏宽度"></div>
+<div class="col-divider" id="divR" title="拖动调整收藏面板宽度"></div>
+<div id="scrim"></div>
+
+<div id="wordBubble"></div>
+<div id="favBar"></div>
+<div id="transPop">
+  <div class="tp-pop-head"><span id="transSrc">译文</span><button id="transClose" aria-label="关闭">×</button></div>
+  <div class="tp-pop-body" id="transBody"></div>
+</div>
+
+<!-- 豆包 AI 迷你聊天窗（本地自用版，右下角，支持多轮/流式/收起） -->
+<div id="aiChat" hidden>
+  <div class="aic-head">
+    <span class="aic-title">问AI</span>
+    <div class="aic-head-btns">
+      <button id="aicFontDec" class="aic-font-btn" title="窗内文字变小" aria-label="缩小文字">A-</button>
+      <button id="aicFontInc" class="aic-font-btn" title="窗内文字变大" aria-label="放大文字">A+</button>
+      <button id="aicClear" title="清空上下文记忆">清空记忆</button>
+      <button id="aicMin" title="召回到右下角" aria-label="收起">—</button>
+    </div>
+  </div>
+  <div class="aic-rz aic-rz-t" data-rz="t" title="拖动调整高度"></div>
+  <div class="aic-rz aic-rz-r" data-rz="r" title="拖动调整宽度"></div>
+  <div class="aic-rz aic-rz-b" data-rz="b" title="拖动调整高度"></div>
+  <div class="aic-rz aic-rz-l" data-rz="l" title="拖动调整宽度"></div>
+  <div class="aic-rz aic-rz-tl" data-rz="tl" title="拖动同时调整宽高"></div>
+  <div class="aic-rz aic-rz-tr" data-rz="tr" title="拖动同时调整宽高"></div>
+  <div class="aic-rz aic-rz-bl" data-rz="bl" title="拖动同时调整宽高"></div>
+  <div class="aic-rz aic-rz-br" data-rz="br" title="拖动同时调整宽高"></div>
+  <div class="aic-messages" id="aicMessages"></div>
+  <div class="aic-input-row">
+    <textarea id="aicInput" rows="1" placeholder="继续追问… Enter 发送 / Shift+Enter 换行"></textarea>
+    <button id="aicStop" class="aic-tool" aria-label="打断回答" title="打断当前回答">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+        <rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>
+      </svg>
+    </button>
+    <button id="aicSend" class="primary">发送</button>
+  </div>
+</div>
+
+<!-- AI 常驻悬浮球：窗口召回后显示，点击唤出聊天窗 -->
+<button id="aiFab" aria-label="打开问AI" title="问AI">
+  <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+    <path d="M12 3l1.7 4.8L18.5 9.5 13.7 11.2 12 16l-1.7-4.8L5.5 9.5l4.8-1.7z" fill="currentColor"/>
+    <path d="M18.5 15l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z" fill="currentColor"/>
+  </svg>
+</button>
+<div id="toast"></div>
+
+<!-- 倒计时：紧贴按钮的紧凑下拉小面板 -->
+<div id="timerPanel">
+  <span class="tp2-caret" id="tpCaret"></span>
+  <div class="tp2-title">倒计时 <button id="timerClose" class="tp2-x" aria-label="关闭">×</button></div>
+  <div class="tp2-inputs" id="tpInputs">
+    <label>时<input id="tH" type="number" min="0" max="99" value="0" inputmode="numeric"></label>
+    <label>分<input id="tM" type="number" min="0" max="59" value="20" inputmode="numeric"></label>
+    <label>秒<input id="tS" type="number" min="0" max="59" value="0" inputmode="numeric"></label>
+  </div>
+  <div class="tp2-time" id="tpTime">
+    <span class="tp2-tag" id="timerTag">已超时</span>
+    <span id="timerTime">00:20:00</span>
+  </div>
+  <div class="tp2-btns">
+    <button class="primary" id="tStart">开始</button>
+    <button id="tPause" hidden>暂停</button>
+    <button id="tReset" hidden>重置</button>
+  </div>
+</div>
+
+<!-- 纯计时秒表：紧贴"秒表"按钮的紧凑下拉小面板 -->
+<div id="swPanel">
+  <span class="tp2-caret" id="swCaret"></span>
+  <div class="tp2-title">秒表 <button id="swClose" class="tp2-x" aria-label="关闭">×</button></div>
+  <div class="sw-time" id="swTime">00:00:00</div>
+  <div class="tp2-btns">
+    <button class="primary" id="swToggle">开始</button>
+    <button id="swReset">重置</button>
+  </div>
+</div>
+
+<!-- 倒计时结束弹窗；提示音样本：Wikimedia Commons《BELLd.wav》("school bell ring", Yink059, CC BY-SA 4.0)，已内联并做无缝循环处理，见 src/alarm_bell.js -->
+<div id="timerModal">
+  <div class="tm-card">
+    <h2>倒计时结束啦</h2>
+    <p>专注时段已结束，倒计时已转为"已超时"正计时（点击下方按钮关闭本提示框）。</p>
+    <button id="tmClose">关 闭</button>
+  </div>
+</div>
+
+<!-- 通用确认弹层（删除收藏等） -->
+<div id="confirmModal" role="dialog" aria-modal="true">
+  <div class="cm-card">
+    <div class="cm-title" id="cmTitle">确认操作</div>
+    <div class="cm-msg" id="cmMsg"></div>
+    <div class="cm-btns">
+      <button type="button" id="cmCancel">取消</button>
+      <button type="button" class="primary" id="cmOk">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- __SCRIPT__ -->
+</body>
+</html>
