@@ -42,7 +42,7 @@ const DOUBAO_CONFIG = {
 };
 
 /* 调用层人设：只拼进每次 API 请求的 messages，不写入 aiHistory，也不在页面上显示。 */
-const AI_SYSTEM_PROMPT = '你是一个考研英语二讲解AI';
+const AI_SYSTEM_PROMPT = '你是一个考研英语讲解AI。只讲解我发给你的对话中的英文，不做过多延伸；在讲明白的前提下尽量简短、简洁，不说废话。回答的绝大部分内容都要围绕我发给你的英文本身，不要跑题。';
 
 /* ---------------- 单词气泡 ---------------- */
 const bubble = $('#wordBubble');
