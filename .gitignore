@@ -1,6 +1,7 @@
-# 公开分享仓库：保留可复现的源码与单文件成品；原始大词典、备份、截图不入库
+# 公开分享仓库：保留可复现的源码、单文件成品和完整构建输入；备份、截图不入库
 /*
 !/index.html
+!/README.md
 !/requirements.txt
 !/.gitattributes
 !/.github/
@@ -11,9 +12,6 @@
 !/*.template.html
 !/cloudflare_worker.js
 !.gitignore
-
-# 66MB 原始 ECDICT 只留在本地，运行时词典在 data/dict-parts 中
-/data/dict/ecdict.csv
 
 # 旧调试脚本与铃声素材不参与网页构建；只保留组装与词典构建脚本
 /tools/*
