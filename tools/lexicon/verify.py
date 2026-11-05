@@ -13,7 +13,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 from playwright.sync_api import sync_playwright
 
 BASE = Path(__file__).resolve().parents[2]
-URL = "file:///" + os.path.join(BASE, "index.html").replace("\\", "/")
+URL = (BASE / "index.html").as_uri()
 WORD_RE = r"[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-z0-9À-ÖØ-öø-ÿ'’&.\-]*"
 CHANNEL = os.environ.get("PLAYWRIGHT_CHANNEL", "msedge").strip()
 results = []

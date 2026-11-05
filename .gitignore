@@ -2,6 +2,8 @@
 /*
 !/index.html
 !/requirements.txt
+!/.gitattributes
+!/.github/
 !/src/
 !/tools/
 !/data/

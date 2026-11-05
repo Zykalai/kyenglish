@@ -65,9 +65,16 @@ python tools/lexicon/verify.py           # Playwright 端到端检查（唯一�
 
 单词卡只在卷面 `.can-lookup` 内出现；AI 对话、收藏、目录、首页使用 `.can-select`，只保留划句，不触发点词。
 
-## 测试
+## 测试与 CI
 
 `tools/lexicon/verify.py` 是唯一验收脚本，覆盖 17 套真题的逐词释义、词形覆盖、卷面点词、AI/收藏点词排除等 16 项检查。旧版 `tools/selftest.py` 与调试脚本已归档到 `_archive/tools-legacy-2026-11-05/`，不再参与构建。
+
+`.github/workflows/ci.yml` 在每次 push / PR 到 `main` 时：
+
+1. 跑 `tools/assemble.py`，再 `git diff --exit-code -- index.html`，防止改了 `src/`、模板或词典却忘记提交生成的 `index.html`；
+2. 安装 Playwright Chromium，跑 `verify.py` 做端到端检查。
+
+CI 不依赖 spaCy/ECDICT，不需要 66MB 原始词典；它验证的是已提交的 `lexicon.json` / `wordmap.json` 与生成物。
 
 ## 网络配置
 
