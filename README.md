@@ -2,9 +2,9 @@
 
 2010–2026 年考研英语（二）真题阅读器：保留纸质书式的版面，点击任意英文单词即可查词，支持 AI 讲解、整句翻译、收藏、黑夜模式和专注倒计时。
 
-[在线使用](https://ab123666.github.io/kyenglish/) · [CI](https://github.com/ab123666/kyenglish/actions/workflows/ci.yml)
+[在线使用](https://zykalai.github.io/kyenglish/) · [CI](https://github.com/Zykalai/kyenglish/actions/workflows/ci.yml)
 
-[![CI](https://github.com/ab123666/kyenglish/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ab123666/kyenglish/actions/workflows/ci.yml)
+[![CI](https://github.com/Zykalai/kyenglish/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Zykalai/kyenglish/actions/workflows/ci.yml)
 
 ## 功能
 
@@ -21,7 +21,7 @@
 ## 快速开始
 
 ```bash
-git clone https://github.com/ab123666/kyenglish.git
+git clone https://github.com/Zykalai/kyenglish.git
 cd kyenglish
 ```
 

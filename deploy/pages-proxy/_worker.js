@@ -7,7 +7,7 @@
  *
  * Pages settings:
  *   WORKER_URL   = https://kyenglish.a965684016.workers.dev   (optional)
- *   ALLOW_ORIGIN = https://ab123666.github.io,null           (optional)
+ *   ALLOW_ORIGIN = https://zykalai.github.io,https://ab123666.github.io,null (optional)
  *
  * Translation is a separate, stateless channel:
  *   Browser -> /translate -> Ark Responses API (doubao-seed-translation)
@@ -16,7 +16,7 @@
  */
 
 const DEFAULT_WORKER = "https://kyenglish.a965684016.workers.dev";
-const DEFAULT_ALLOW = "https://ab123666.github.io,null";
+const DEFAULT_ALLOW = "https://zykalai.github.io,https://ab123666.github.io,null";
 const DEFAULT_TRANSLATE_ENDPOINT = "ep-20261105203321-sd6jb";
 const ARK_RESPONSES_URL = "https://ark.cn-beijing.volces.com/api/v3/responses";
 

@@ -63,8 +63,8 @@ location.reload();
 
 ```powershell
 curl.exe -i https://kyenglish-ai-proxy.pages.dev/
-curl.exe -i -X OPTIONS https://kyenglish-ai-proxy.pages.dev/chat/completions -H "Origin: https://ab123666.github.io"
-curl.exe -i -X POST https://kyenglish-ai-proxy.pages.dev/translate -H "Content-Type: application/json" -H "Origin: https://ab123666.github.io" --data "{\"text\":\"Trains have become the preferred means of travel.\"}"
+curl.exe -i -X OPTIONS https://kyenglish-ai-proxy.pages.dev/chat/completions -H "Origin: https://zykalai.github.io"
+curl.exe -i -X POST https://kyenglish-ai-proxy.pages.dev/translate -H "Content-Type: application/json" -H "Origin: https://zykalai.github.io" --data "{\"text\":\"Trains have become the preferred means of travel.\"}"
 ```
 
 预期：`/` 返回 `{"ok":true,...}`；`OPTIONS` 返回 `204`，并带 `Access-Control-Allow-Origin`。
@@ -74,7 +74,7 @@ curl.exe -i -X POST https://kyenglish-ai-proxy.pages.dev/translate -H "Content-T
 ## 可选配置
 
 - `WORKER_URL`：默认 `https://kyenglish.a965684016.workers.dev`；如果以后换 Worker，改这个变量。
-- `ALLOW_ORIGIN`：默认 `https://ab123666.github.io,null`；如果从别的域名打开站点，把对应 Origin 加进去（逗号分隔）。
+- `ALLOW_ORIGIN`：默认 `https://zykalai.github.io,https://ab123666.github.io,null`；如果从别的域名打开站点，把对应 Origin 加进去（逗号分隔）。
 
 ## 注意
 
