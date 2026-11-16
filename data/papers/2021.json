@@ -207,7 +207,8 @@
      "A": "an increase in full-time employment",
      "B": "an urgent demand for new job skills",
      "C": "a steady growth of job opportunities",
-     "D": "a controversy about the \"core skills\""
+     "D": "a controversy about the \"core skills\"",
+     "answer": "B"
     },
     {
      "no": 22,
@@ -215,7 +216,8 @@
      "A": "an alternative to the fire-and-hire strategy",
      "B": "an immediate need for government support",
      "C": "the importance of staff appraisal standards",
-     "D": "the characteristics of reskilling programs"
+     "D": "the characteristics of reskilling programs",
+     "answer": "A"
     },
     {
      "no": 23,
@@ -223,7 +225,8 @@
      "A": "have driven up labour costs",
      "B": "have proved to be inconsistent",
      "C": "have met with fierce opposition",
-     "D": "have appeared to be insufficient"
+     "D": "have appeared to be insufficient",
+     "answer": "D"
     },
     {
      "no": 24,
@@ -231,7 +234,8 @@
      "A": "a call for policy adjustment",
      "B": "a change in hiring practices",
      "C": "a lack of medical workers",
-     "D": "a sign of economic recovery"
+     "D": "a sign of economic recovery",
+     "answer": "C"
     },
     {
      "no": 25,
@@ -239,7 +243,8 @@
      "A": "create job vacancies for the unemployed",
      "B": "prepare their laid-off workers for other jobs",
      "C": "retrain their cabin staff for better services",
-     "D": "finance their staff's college education"
+     "D": "finance their staff's college education",
+     "answer": "B"
     }
    ]
   },
@@ -254,7 +259,8 @@
      "A": "be hindered by its population growth",
      "B": "contribute to the nation's well-being",
      "C": "become a priority of the government",
-     "D": "pose a challenge to its farming industry"
+     "D": "pose a challenge to its farming industry",
+     "answer": "B"
     },
     {
      "no": 27,
@@ -262,7 +268,8 @@
      "A": "farmland has been inefficiently utilized",
      "B": "factory-style production needs reforming",
      "C": "most land is used for meat and dairy production",
-     "D": "more green fields will be converted for farming"
+     "D": "more green fields will be converted for farming",
+     "answer": "C"
     },
     {
      "no": 28,
@@ -270,7 +277,8 @@
      "A": "its farming technology",
      "B": "its dietary tradition",
      "C": "its natural conditions",
-     "D": "its commercial interests"
+     "D": "its commercial interests",
+     "answer": "C"
     },
     {
      "no": 29,
@@ -278,7 +286,8 @@
      "A": "rely largely on imports for fresh produce",
      "B": "enjoy a steady rise in fruit consumption",
      "C": "are seeking effective ways to cut calorie intake",
-     "D": "are trying to grow new varieties of grains"
+     "D": "are trying to grow new varieties of grains",
+     "answer": "A"
     },
     {
      "no": 30,
@@ -286,7 +295,8 @@
      "A": "defensive",
      "B": "doubtful",
      "C": "tolerant",
-     "D": "optimistic"
+     "D": "optimistic",
+     "answer": "B"
     }
    ]
   },
@@ -301,7 +311,8 @@
      "A": "Their engineers were retained.",
      "B": "Their market values declined.",
      "C": "Their tech features improved.",
-     "D": "Their products were re-priced."
+     "D": "Their products were re-priced.",
+     "answer": "A"
     },
     {
      "no": 32,
@@ -309,7 +320,8 @@
      "A": "exaggerate their product quality",
      "B": "eliminate their potential competitors",
      "C": "treat new tech talent unfairly",
-     "D": "ignore public opinions"
+     "D": "ignore public opinions",
+     "answer": "B"
     },
     {
      "no": 33,
@@ -317,7 +329,8 @@
      "A": "weaken big tech companies",
      "B": "worsen market competition",
      "C": "harm the national economy",
-     "D": "discourage start-up investors"
+     "D": "discourage start-up investors",
+     "answer": "C"
     },
     {
      "no": 34,
@@ -325,7 +338,8 @@
      "A": "limit Big Tech's expansion",
      "B": "encourage research collaboration",
      "C": "examine small acquisitions",
-     "D": "supervise start-ups' operation"
+     "D": "supervise start-ups' operation",
+     "answer": "C"
     },
     {
      "no": 35,
@@ -333,7 +347,8 @@
      "A": "brought little financial pressure",
      "B": "raised few management challenges",
      "C": "set an example for future deals",
-     "D": "generated considerable profits"
+     "D": "generated considerable profits",
+     "answer": "A"
     }
    ]
   },
@@ -348,7 +363,8 @@
      "A": "the power of people's memory",
      "B": "the reliability of first impressions",
      "C": "instructor-student interaction",
-     "D": "people's ability to influence others"
+     "D": "people's ability to influence others",
+     "answer": "B"
     },
     {
      "no": 37,
@@ -356,7 +372,8 @@
      "A": "focused on specific details",
      "B": "gave the rating in limited time",
      "C": "watched shorter video clips",
-     "D": "discussed with one another"
+     "D": "discussed with one another",
+     "answer": "A"
     },
     {
      "no": 38,
@@ -364,7 +381,8 @@
      "A": "reflection can be distracting",
      "B": "memory may be selective",
      "C": "social skills must be cultivated",
-     "D": "deception is difficult to detect"
+     "D": "deception is difficult to detect",
+     "answer": "A"
     },
     {
      "no": 39,
@@ -372,7 +390,8 @@
      "A": "collect enough data",
      "B": "list your preferences",
      "C": "seek expert advice",
-     "D": "follow your feelings"
+     "D": "follow your feelings",
+     "answer": "D"
     },
     {
      "no": 40,
@@ -380,7 +399,8 @@
      "A": "Generating new products takes time.",
      "B": "Intuition may affect reflective tasks.",
      "C": "Vocabulary comprehension needs creativity.",
-     "D": "Objective thinking may boost intuitiveness."
+     "D": "Objective thinking may boost intuitiveness.",
+     "answer": "B"
     }
    ]
   }

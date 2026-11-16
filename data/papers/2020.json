@@ -257,7 +257,8 @@
      "A": "The growth in the number of corporations",
      "B": "The general pay rise with a better economy",
      "C": "Increased business opportunities for top firms",
-     "D": "Close cooperation among leading economics"
+     "D": "Close cooperation among leading economics",
+     "answer": "C"
     },
     {
      "no": 27,
@@ -265,7 +266,8 @@
      "A": "foster a stronger sense of teamwork",
      "B": "finance more research and development",
      "C": "establish closer ties with tech companies",
-     "D": "operate more globalized companies"
+     "D": "operate more globalized companies",
+     "answer": "D"
     },
     {
      "no": 28,
@@ -273,7 +275,8 @@
      "A": "continual internal opposition",
      "B": "strict corporate governance",
      "C": "conservative business strategies",
-     "D": "repeated governance warnings"
+     "D": "repeated governance warnings",
+     "answer": "B"
     },
     {
      "no": 29,
@@ -281,7 +284,8 @@
      "A": "confirm the status of CEOs",
      "B": "motivate inside candidates",
      "C": "boost the efficiency of CEOs",
-     "D": "increase corporate value"
+     "D": "increase corporate value",
+     "answer": "D"
     },
     {
      "no": 30,
@@ -289,7 +293,8 @@
      "A": "CEOs Are Not Overpaid",
      "B": "CEO Pay: Past and Present",
      "C": "CEOs' Challenges of Today",
-     "D": "CEO Traits: Not Easy to Define"
+     "D": "CEO Traits: Not Easy to Define",
+     "answer": "A"
     }
    ]
   },
@@ -304,7 +309,8 @@
      "A": "Its effects are questionable",
      "B": "It has been opposed by a judge",
      "C": "It needs tougher enforcement",
-     "D": "Its fate is yet to be decided"
+     "D": "Its fate is yet to be decided",
+     "answer": "D"
     },
     {
      "no": 32,
@@ -312,7 +318,8 @@
      "A": "They are biased against car manufacturers.",
      "B": "They prove impractical for city councils.",
      "C": "They are deemed too mild for politicians.",
-     "D": "They put too much burden on individual motorists."
+     "D": "They put too much burden on individual motorists.",
+     "answer": "D"
     },
     {
      "no": 33,
@@ -320,7 +327,8 @@
      "A": "arouse strong resistance.",
      "B": "ensure Khan's electoral success.",
      "C": "improve the city's traffic.",
-     "D": "discourage car manufacturing."
+     "D": "discourage car manufacturing.",
+     "answer": "A"
     },
     {
      "no": 34,
@@ -328,7 +336,8 @@
      "A": "Local residents",
      "B": "Mayors.",
      "C": "Councilors.",
-     "D": "National governments."
+     "D": "National governments.",
+     "answer": "D"
     },
     {
      "no": 35,
@@ -336,7 +345,8 @@
      "A": "will raise low-emission car production",
      "B": "should be forced to follow regulations",
      "C": "will upgrade the design of their vehicles",
-     "D": "should be put under public supervision"
+     "D": "should be put under public supervision",
+     "answer": "B"
     }
    ]
   },
@@ -351,7 +361,8 @@
      "A": "are recognized for their abilities",
      "B": "are in favor of job offers",
      "C": "are optimistic about the labor market",
-     "D": "are drawing growing public attention"
+     "D": "are drawing growing public attention",
+     "answer": "D"
     },
     {
      "no": 37,
@@ -359,7 +370,8 @@
      "A": "what a tough economic situation is like",
      "B": "what their parents expect of them",
      "C": "how they differ from past generations",
-     "D": "how valuable a counselor's advice is"
+     "D": "how valuable a counselor's advice is",
+     "answer": "A"
     },
     {
      "no": 38,
@@ -367,7 +379,8 @@
      "A": "define",
      "B": "relieve",
      "C": "maintain",
-     "D": "deepen"
+     "D": "deepen",
+     "answer": "B"
     },
     {
      "no": 39,
@@ -375,7 +388,8 @@
      "A": "care little about their job performance",
      "B": "give top priority to professional training",
      "C": "think it hard to achieve work-life balance",
-     "D": "have a clear idea about their future job"
+     "D": "have a clear idea about their future job",
+     "answer": "D"
     },
     {
      "no": 40,
@@ -383,7 +397,8 @@
      "A": "less realistic",
      "B": "less adventurous",
      "C": "more diligent",
-     "D": "more generous"
+     "D": "more generous",
+     "answer": "B"
     }
    ]
   }

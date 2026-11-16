@@ -207,7 +207,8 @@
      "A": "regulate a child's basic emotions",
      "B": "improve a child's intellectual ability",
      "C": "intensify a child's positive feelings",
-     "D": "foster child's moral development"
+     "D": "foster child's moral development",
+     "answer": "D"
     },
     {
      "no": 22,
@@ -215,7 +216,8 @@
      "A": "deceptive",
      "B": "addictive",
      "C": "burdensome",
-     "D": "inexcusable"
+     "D": "inexcusable",
+     "answer": "C"
     },
     {
      "no": 23,
@@ -223,7 +225,8 @@
      "A": "an emotion can play opposing roles",
      "B": "emotions are socially constructive",
      "C": "emotional stability can benefit health",
-     "D": "emotions are context-independent"
+     "D": "emotions are context-independent",
+     "answer": "A"
     },
     {
      "no": 24,
@@ -231,7 +234,8 @@
      "A": "may help correct emotional deficiencies",
      "B": "can bring about emotional satisfaction",
      "C": "can result from either sympathy or guilt",
-     "D": "may be the outcome of impulsive acts"
+     "D": "may be the outcome of impulsive acts",
+     "answer": "C"
     },
     {
      "no": 25,
@@ -239,7 +243,8 @@
      "A": "wrongdoings",
      "B": "discussions",
      "C": "restrictions",
-     "D": "teachings"
+     "D": "teachings",
+     "answer": "A"
     }
    ]
   },
@@ -254,7 +259,8 @@
      "A": "forests may become a potential threat",
      "B": "people may misunderstand global warming",
      "C": "extreme weather conditions may arise",
-     "D": "global climate change may get out of control"
+     "D": "global climate change may get out of control",
+     "answer": "A"
     },
     {
      "no": 27,
@@ -262,7 +268,8 @@
      "A": "lower their present carbon-absorbing capacity",
      "B": "strike a balance among different plants",
      "C": "accelerate the growth of young trees",
-     "D": "preserve the diversity of species in them"
+     "D": "preserve the diversity of species in them",
+     "answer": "A"
     },
     {
      "no": 28,
@@ -270,7 +277,8 @@
      "A": "cultivate more drought-resistant trees",
      "B": "find more effective ways to kill insects",
      "C": "reduce the density of some of its forests",
-     "D": "restore its forests quickly after wildfires"
+     "D": "restore its forests quickly after wildfires",
+     "answer": "C"
     },
     {
      "no": 29,
@@ -278,7 +286,8 @@
      "A": "To carry it out before the year of 2020",
      "B": "To handle the areas in serious danger first",
      "C": "To perfect the emissions-permit auctions",
-     "D": "To obtain enough financial support"
+     "D": "To obtain enough financial support",
+     "answer": "B"
     },
     {
      "no": 30,
@@ -286,7 +295,8 @@
      "A": "ambiguous",
      "B": "tolerant",
      "C": "cautious",
-     "D": "supportive"
+     "D": "supportive",
+     "answer": "D"
     }
    ]
   },
@@ -301,7 +311,8 @@
      "A": "Discrimination against foreign workers in the U.S.",
      "B": "Biased laws in favor of some American businesses",
      "C": "Flaws in U.S. immigration rules for farm workers",
-     "D": "Decline of job opportunities in U.S. agriculture"
+     "D": "Decline of job opportunities in U.S. agriculture",
+     "answer": "C"
     },
     {
      "no": 32,
@@ -309,7 +320,8 @@
      "A": "the rising number of illegal immigrants",
      "B": "the high mobility of crop workers",
      "C": "the lack of experienced laborers",
-     "D": "the aging of immigrant farm workers"
+     "D": "the aging of immigrant farm workers",
+     "answer": "D"
     },
     {
      "no": 33,
@@ -317,7 +329,8 @@
      "A": "To attract younger laborers to farm work",
      "B": "To get native U.S. workers back farming",
      "C": "To use more robots to grow high-value crops",
-     "D": "To strengthen financial support for farmers"
+     "D": "To strengthen financial support for farmers",
+     "answer": "B"
     },
     {
      "no": 34,
@@ -325,7 +338,8 @@
      "A": "slow granting procedures",
      "B": "limit on duration of stay",
      "C": "tightened requirements",
-     "D": "control of annual admissions"
+     "D": "control of annual admissions",
+     "answer": "A"
     },
     {
      "no": 35,
@@ -333,7 +347,8 @@
      "A": "U.S. Agriculture in Decline",
      "B": "Import Food or Labor?",
      "C": "America Saved by Mexico?",
-     "D": "Manpower vs. Automation"
+     "D": "Manpower vs. Automation",
+     "answer": "B"
     }
    ]
   },
@@ -348,7 +363,8 @@
      "A": "demand new laws on the use of plastics",
      "B": "urge consumers to cut the use of plastics",
      "C": "invite public opinion on the plastics crisis",
-     "D": "disclose the causes of the plastics crisis"
+     "D": "disclose the causes of the plastics crisis",
+     "answer": "B"
     },
     {
      "no": 37,
@@ -356,7 +372,8 @@
      "A": "mislead us into doing worthless things",
      "B": "prevent us from making further efforts",
      "C": "weaken our sense of accomplishment",
-     "D": "suppress our desire for success"
+     "D": "suppress our desire for success",
+     "answer": "B"
     },
     {
      "no": 38,
@@ -364,7 +381,8 @@
      "A": "our focus should be shifted to community welfare",
      "B": "our relationship with local industries is improving",
      "C": "we have been actively exercising our civil rights",
-     "D": "we should press our governments to lead the combat"
+     "D": "we should press our governments to lead the combat",
+     "answer": "D"
     },
     {
      "no": 39,
@@ -372,7 +390,8 @@
      "A": "a win-win arrangement",
      "B": "a self-driven mechanism",
      "C": "a cost-effective approach",
-     "D": "a top down process"
+     "D": "a top down process",
+     "answer": "D"
     },
     {
      "no": 40,
@@ -380,7 +399,8 @@
      "A": "can be too aggressive",
      "B": "are far from sufficient",
      "C": "can be too inconsistent",
-     "D": "are far from rational"
+     "D": "are far from rational",
+     "answer": "B"
     }
    ]
   }
