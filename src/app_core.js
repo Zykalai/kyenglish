@@ -192,11 +192,16 @@ function renderNewtype(p) {
   const order = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
   let body = '';
   if (n.form === 'heading') {
-    // 正文内的 {{41}} 标记替换成醒目的标题槽
+    // 正文内的 {{41}} 标记替换成醒目的标题槽（答案放在 .ans-letter 里，随"显示答案"揭示）
+    const ansByNo = {};
+    for (const it of (n.items || [])) if (it && it.no != null) ansByNo[it.no] = it.answer || '';
     const paras = String(n.passage || '').split(/\n{2,}/).map(normSp).filter(Boolean);
     const passage = `<div class="passage">` + paras.map((para, i) => {
-      const html = esc(para).replace(/\{\{(\d+)\}\}/g, (m, no) =>
-        `<span class="heading-slot">${no}．（　　） 请从右侧候选小标题中选择</span>`);
+      const html = esc(para).replace(/\{\{(\d+)\}\}/g, (m, no) => {
+        const ans = ansByNo[no];
+        return `<span class="heading-slot">${no}．（　　） 请从下方候选小标题中选择` +
+          (ans ? `<span class="ans-letter">✓ ${esc(ans)}</span>` : '') + `</span>`;
+      });
       return `<p data-blk="p${i}">${html}</p>`;
     }).join('') + `</div>`;
     const opts = `<ul class="nt-opts" data-blk="options">` + order.filter(k => n.options && n.options[k] != null).map(k =>
